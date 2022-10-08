@@ -29,13 +29,42 @@ company_abbreviation = {"成都环宇知了科技有限公司": "环宇",
 
 
 # 字典样式
-# dicta = {
-#     "公司全称": {
-#         "简称": "asdad",
-#         "sheet_list": [],
-#     },
-#     "公司全称a": {
-#         "简称": "asdad",
-#         "sheet_list": [],
-#     },
+# data = {"公式简称1": {
+#                     "公司+日期1": {
+#                                     "Leval1": {"code": [], "data": [
+#                                     ["科目代码","部门","项目","本期借方发生","本期借方累积"]
+#                                     ]},
+#                                     "Leval2": {"code": [], "data": []},
+#                                     "Leval3": {"code": [], "data": []},
+#                                     "Leval4": {"code": [], "data": []},
+#                                     "Leval5": {"code": [], "data": []},
+#                                  },
+#                     "公司+日期2": {
+#                                     "Leval1": {"code": [], "data": []},
+#                                     "Leval2": {"code": [], "data": []},
+#                                     "Leval3": {"code": [], "data": []},
+#                                     "Leval4": {"code": [], "data": []},
+#                                     "Leval5": {"code": [], "data": []},
+#                                 }
+#                     },
+#
+#         "公式简称2": {
+#                     "公司+日期1": {
+#                                     "Leval1": {"code": [], "data": []},
+#                                     "Leval2": {"code": [], "data": []},
+#                                     "Leval3": {"code": [], "data": []},
+#                                     "Leval4": {"code": [], "data": []},
+#                                     "Leval5": {"code": [], "data": []},
+#                                  },
+#                     "公司+日期2": {
+#                                     "Leval1": {"code": [], "data": []},
+#                                     "Leval2": {"code": [], "data": []},
+#                                     "Leval3": {"code": [], "data": []},
+#                                     "Leval4": {"code": [], "data": []},
+#                                     "Leval5": {"code": [], "data": []},
+#                                 }
+#                     }
 # }
+
+
+

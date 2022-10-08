@@ -15,7 +15,7 @@ from openpyxl.utils import get_column_letter
 class FirstDeal:
     def __init__(self, filepath):
         self.file_path = filepath
-        self.company_sheet_name_dict = {}
+        self.company_sheet_detail = {}
         self.time_data = set()  # 可选日期
 
         # 尝试打开文件，得到wb
@@ -30,8 +30,8 @@ class FirstDeal:
     def deal_sheets(self):
         """
         处理文件相关sheets name 数据规整
-        company_sheet_name_dict  :  各公司简写名字的对应有的表名
-        :return: self.company_sheet_name_dict
+        company_sheet_detail  :  各公司简写名字的对应有的表名
+        :return: self.company_sheet_detail
         """
 
         # 公司简写
@@ -40,8 +40,8 @@ class FirstDeal:
 
         # 构建公司字典
         for x in company_abb:
-            if x not in self.company_sheet_name_dict:
-                self.company_sheet_name_dict[x] = {}
+            if x not in self.company_sheet_detail:
+                self.company_sheet_detail[x] = {}
             else:
                 pass
         # 读取所有表格中所有的信息，并按照预定格式组合
@@ -53,9 +53,9 @@ class FirstDeal:
                     # 处理数据，得到组合数据
                     finally_sheet_data = self.rebuilt_page_data(sheet_data)
                     # 组合数据
-                    self.company_sheet_name_dict[item_company_abb][item_sheet_name] = finally_sheet_data
+                    self.company_sheet_detail[item_company_abb][item_sheet_name] = finally_sheet_data
         # 可接受返回的数据，也可以直接调取属性
-        return self.company_sheet_name_dict
+        return self.company_sheet_detail
 
     def read_single_sheet_table(self, sheet_name):
         """
@@ -79,7 +79,10 @@ class FirstDeal:
         """
         组装单张表格里面的所有数据
         page_data = {
-            "Leval1": {"code": [], "data": []},
+            "Leval1": {"code": [], "data": [
+                                            ["科目代码","部门","项目","本期借方发生","本期借方累积"],
+                                            ]
+                    },
             "Leval2": {"code": [], "data": []},
             "Leval3": {"code": [], "data": []},
             "Leval4": {"code": [], "data": []},
@@ -109,35 +112,37 @@ class FirstDeal:
                     if useful_leval in data_index[0]:
                         # 有效数据
 
+                        # ["科目代码","部门","项目","本期借方发生","本期借方累积"]
+                        data_detail = [data_index[0], data_index[1], data_index[2], data_index[7], data_index[9]]
                         # 组织一级标题及数据
                         if len(data_index[0]) == 4 and data_index[2] is None:
                             page_data["Leval1"]["code"].append(data_index[0])
                         elif len(data_index[0]) == 4 and data_index[2] is not None:
-                            page_data["Leval1"]["data"].append(data_index)
+                            page_data["Leval1"]["data"].append(data_detail)
 
                         # 组织二级
                         elif len(data_index[0]) == 7 and data_index[2] is None:
                             page_data["Leval2"]["code"].append(data_index[0])
                         elif len(data_index[0]) == 7 and data_index[2] is not None:
-                            page_data["Leval2"]["data"].append(data_index)
+                            page_data["Leval2"]["data"].append(data_detail)
 
                         # 组织三级
                         elif len(data_index[0]) == 10 and data_index[2] is None:
                             page_data["Leval3"]["code"].append(data_index[0])
                         elif len(data_index[0]) == 10 and data_index[2] is not None:
-                            page_data["Leval3"]["data"].append(data_index)
+                            page_data["Leval3"]["data"].append(data_detail)
 
                         # 组织四级
                         elif len(data_index[0]) == 13 and data_index[2] is None:
                             page_data["Leval4"]["code"].append(data_index[0])
                         elif len(data_index[0]) == 13 and data_index[2] is not None:
-                            page_data["Leval4"]["data"].append(data_index)
+                            page_data["Leval4"]["data"].append(data_detail)
 
                         # 组织五级
                         elif len(data_index[0]) == 16 and data_index[2] is None:
                             page_data["Leval5"]["code"].append(data_index[0])
                         elif len(data_index[0]) == 16 and data_index[2] is not None:
-                            page_data["Leval5"]["data"].append(data_index)
+                            page_data["Leval5"]["data"].append(data_detail)
                     else:
                         continue
         return page_data
@@ -147,8 +152,8 @@ class FirstDeal:
         获取表单中存在的有效数据，方便后续筛选的时候使用
         :return:self.time_data
         """
-        for company in self.company_sheet_name_dict.keys():
-            for company_date in self.company_sheet_name_dict[company].keys():
+        for company in self.company_sheet_detail.keys():
+            for company_date in self.company_sheet_detail[company].keys():
                 self.time_data.add(company_date[-4:])
         self.time_data = list(self.time_data)
         self.time_data.sort()
@@ -157,3 +162,4 @@ class FirstDeal:
 
 if __name__ == '__main__':
     a = FirstDeal("/Users/MikeImac/Desktop/FinanceTool/经营检测表（费用明细表）数据底稿.xlsx")
+    print(a.company_sheet_detail)
