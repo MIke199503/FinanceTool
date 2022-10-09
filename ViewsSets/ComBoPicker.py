@@ -29,7 +29,7 @@ class Picker(ttk.Frame):
 
         self._command = command
         self.index = 0
-        ttk.Frame.__init__(self, master, borderwidth=borderwidth, height=10, relief=relief)
+        Frame.__init__(self, master, borderwidth=borderwidth, width=600, height=10, relief=relief)
 
         self.bind("<FocusIn>", lambda event: self.event_generate('<<PickerFocusIn>>'))
         self.bind("<FocusOut>", lambda event: self.event_generate('<<PickerFocusOut>>'))
@@ -45,7 +45,7 @@ class Picker(ttk.Frame):
 
         self.canvas.config(highlightthickness=0)  # 去掉选中边框
         vbar.config(command=self.canvas.yview)
-        self.canvas.config(width=300, height=150)
+        self.canvas.config(width=600, height=200)
         self.canvas.config(yscrollcommand=vbar.set)
         # self.canvas.config(scrollregion=self.canvas.bbox('all'))
         # self._font = tkFont.Font()
@@ -54,8 +54,11 @@ class Picker(ttk.Frame):
         self.dict_intvar_item = {}
         for index, item in enumerate(self._values):
             self.dict_intvar_item[item] = IntVar()
-            self.dict_checkbutton[item] = ttk.Checkbutton(frame, text=item, variable=self.dict_intvar_item[item],
-                                                          command=lambda ITEM=item: self._command(ITEM))
+            self.dict_checkbutton[item] = Checkbutton(frame,
+                                                      text=item,
+                                                      variable=self.dict_intvar_item[item],
+                                                      command=lambda ITEM=item: self._command(ITEM),
+                                                      anchor="w")
             self.dict_checkbutton[item].grid(row=index, column=0, sticky=NSEW, padx=5)
             self.dict_intvar_item[item].set(0)
             if item in self._entry_wid.get().split(','):
@@ -99,7 +102,7 @@ class Combopicker(ttk.Entry, Picker):
         if entrystyle is not None:
             entry_config["style"] = entrystyle
 
-        ttk.Entry.__init__(self, master, textvariable=self.entry_var, **entry_config, state="")
+        Entry.__init__(self, master, textvariable=self.entry_var, **entry_config, width=35, state="normal")
 
         self._is_menuoptions_visible = False
 

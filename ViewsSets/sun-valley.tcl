@@ -51,7 +51,7 @@ proc set_theme {mode} {
 
 		array set colors {
 		    -fg             "#202020"
-		    -bg             "#fafafa"
+		    -bg             "#FFFFFF"
 		    -disabledfg     "#a0a0a0"
 		    -selectfg       "#ffffff"
 		    -selectbg       "#2f60d8"
@@ -64,7 +64,7 @@ proc set_theme {mode} {
             -focuscolor $colors(-selectbg) \
             -selectbackground $colors(-selectbg) \
             -selectforeground $colors(-selectfg) \
-            -insertwidth 1 \
+            -insertwidth 3 \
             -insertcolor $colors(-fg) \
             -fieldbackground $colors(-selectbg) \
             -font {"Segoe UI" 15} \

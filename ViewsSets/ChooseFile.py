@@ -11,7 +11,7 @@ import tkinter.filedialog as fp
 from tkinter import ttk
 from tkinter.messagebox import *
 import DataModule.ReadExcel as readExcel
-import os
+from ViewsSets.QueryView import QueryView
 
 
 class ChooseFile:
@@ -21,8 +21,8 @@ class ChooseFile:
         self.root.geometry("1920x1080")
 
         # built views by automatic
-        self.page = ttk.Frame(self.root, width=1920, height=1080)
-        self.page.pack()
+        self.page = tkinter.Frame(self.root, width=1920, height=1080, background="white")
+        self.page.place(relx=0, rely=0)
         s1 = ttk.Style()
         s1.configure("A.TButton", font=("Arial", 25, "normal"))
         button = ttk.Button(self.page,
@@ -44,17 +44,10 @@ class ChooseFile:
             showerror(title="很可惜，发生了一点错误。:", message="你所选择的文件不符合要求，请仔细核对并重新选择。")
         else:
             self.page.destroy()  # shut down this view
+            QueryView(root_page=self.root)
             # start the next view ,we need resource because want to economize the internal memory.
             # it's not need to open file twice .
 
 
-if __name__ == '__main__':
-    root = tkinter.Tk()
-    root.title('财务')
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    print(dir_path)
-    root.tk.call('source', os.path.join(dir_path, 'sun-valley.tcl'))
-    root.tk.call("set_theme", "light")
-    root.geometry("1920x1080")
-    ChooseFile(root=root)
-    root.mainloop()
+
+
