@@ -8,14 +8,14 @@
 """
 
 import openpyxl
-import BasicMessage
+from DataModule import BasicMessage
 from openpyxl.utils import get_column_letter
 
 
 class FirstDeal:
     def __init__(self, filepath):
         self.file_path = filepath
-        self.company_sheet_detail = {}
+        self.company_sheet_detail = {}  # 所有数据
         self.time_data = set()  # 可选日期
 
         # 尝试打开文件，得到wb
