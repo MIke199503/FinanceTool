@@ -164,18 +164,23 @@ class FirstDeal:
 
     def calculate_year_basis(self):
         """
-        计算环比，同比，
+        计算环比，同比，并替换到原有数据中
         :return:
         """
+
+        # 等级名字
         level_list = ["Level1", "Level2", "Level3", "Level4", "Level5"]
 
-        for company_index in self.company_sheet_detail:
-            for date_index in self.company_sheet_detail[company_index]:
-                for level_meg in level_list:
-                    if self.company_sheet_detail[company_index][date_index][level_meg]["data"]:
+        # 处理所有数据
+        for company_index in self.company_sheet_detail:  # 公司
+            for date_index in self.company_sheet_detail[company_index]:  # 日期表
+                for level_meg in level_list:  # 每个等级的所有数据都需要处理
+                    if self.company_sheet_detail[company_index][date_index][level_meg]["data"]:  # 有数据
+                        # 每一个数据行
                         for singe_item in self.company_sheet_detail[company_index][date_index][level_meg]["data"]:
                             data_index = self.company_sheet_detail[company_index][date_index][level_meg]["data"].index(
-                                singe_item)
+                                singe_item)  # 获取一下对应的数据行在数据中的位置，方便后面整体更换
+
                             # 当月同
                             num_1 = singe_item[3]
                             num_2 = self.get_target_data(data_dict=self.company_sheet_detail,
@@ -192,7 +197,7 @@ class FirstDeal:
                                                          depart=singe_item[1]
                                                          , )
 
-                            if num_2 is None or int(num_2[3]) == 0:
+                            if num_2 is None or int(num_2[3]) == 0:  # 没有数据，或者数据为0
                                 tong_data = "0"
                             else:
                                 tong_data = str((int(num_1) - int(num_2[3])) / int(num_2[3]))
@@ -215,14 +220,20 @@ class FirstDeal:
                             else:
                                 year_tong_data = str((int(num_a) - int(num_b[4]) / int(num_b[4])))
 
+                            # 组织新数据
                             new_singe_item = singe_item[:]
                             new_singe_item.append(tong_data)
                             new_singe_item.append(circle_data)
                             new_singe_item.append(year_tong_data)
-                            self.company_sheet_detail[company_index][date_index][level_meg]["data"][
-                                data_index] = new_singe_item
+                            # 替换原有数据
+                            self.company_sheet_detail[company_index][date_index][level_meg]["data"][data_index] = new_singe_item
 
     def get_compare_date(self, data_string: str):
+        """
+        获取对应时间的同比、环比时间
+        :param data_string: 日期数据解析（表单）
+        :return: circle_bi, tong_bi  : 环比，同比
+        """
         date_data = data_string[-4:]
         company_head = data_string[:-4]
         tong_bi = company_head + str(int(date_data) - 100)
@@ -233,6 +244,16 @@ class FirstDeal:
         return circle_bi, tong_bi
 
     def get_target_data(self, data_dict, company, date, code, depart):
+        """
+        获取对应环比、同比对应的数据行
+        :param data_dict: 数据源
+        :param company: 公司简写
+        :param date: 公司+日期（表单）
+        :param code: 科目代码
+        :param depart: 部门
+        :return:None / 对应数据行
+        """
+        # 匹配科目code，缩小搜索范围
         level = "Level1"
         if len(code) == 4:
             level = "Level1"
@@ -245,18 +266,20 @@ class FirstDeal:
         elif len(code) == 16:
             level = "Level5"
 
+        # 是否有对应的表单
         try:
             data_temp = data_dict[company][date][level]["data"]
         except:
             return None
 
+        # 如果有数据
         if data_temp:
-            exist_flag = 0
+            exist_flag = 0  # 没有对应行
             for item in data_temp:
                 if item[0] == code and depart == item[1]:
                     exist_flag = 1
                     return item
-            if exist_flag == 0:
+            if exist_flag == 0:  # 完全没有数据
                 return None
 
 
