@@ -20,12 +20,13 @@ class FirstDeal:
 
         # 尝试打开文件，得到wb
         try:
-            self.wb = openpyxl.load_workbook(filepath)
+            self.wb = openpyxl.load_workbook(filepath, data_only=True)
             self.workbook_sheets_names = self.wb.sheetnames
         except:
             print("somethings wrong")
         self.deal_sheets()
         self.get_time_data()
+        self.calculate_year_basis()
 
     def deal_sheets(self):
         """
@@ -95,12 +96,12 @@ class FirstDeal:
         """
         # 预设数据
         page_data = {
-                    "Level1": {"code": {}, "data": []},
-                    "Level2": {"code": {}, "data": []},
-                    "Level3": {"code": {}, "data": []},
-                    "Level4": {"code": {}, "data": []},
-                    "Level5": {"code": {}, "data": []},
-                     }
+            "Level1": {"code": {}, "data": []},
+            "Level2": {"code": {}, "data": []},
+            "Level3": {"code": {}, "data": []},
+            "Level4": {"code": {}, "data": []},
+            "Level5": {"code": {}, "data": []},
+        }
         # 有效一级标题
         useful_Level_1 = ["6601", "6602", "6603"]
 
@@ -162,7 +163,101 @@ class FirstDeal:
         return self.time_data
 
     def calculate_year_basis(self):
-        pass
+        """
+        计算环比，同比，
+        :return:
+        """
+        level_list = ["Level1", "Level2", "Level3", "Level4", "Level5"]
+
+        for company_index in self.company_sheet_detail:
+            for date_index in self.company_sheet_detail[company_index]:
+                for level_meg in level_list:
+                    if self.company_sheet_detail[company_index][date_index][level_meg]["data"]:
+                        for singe_item in self.company_sheet_detail[company_index][date_index][level_meg]["data"]:
+                            data_index = self.company_sheet_detail[company_index][date_index][level_meg]["data"].index(
+                                singe_item)
+                            # 当月同
+                            num_1 = singe_item[3]
+                            num_2 = self.get_target_data(data_dict=self.company_sheet_detail,
+                                                         company=company_index,
+                                                         date=self.get_compare_date(date_index)[1],
+                                                         code=singe_item[0],
+                                                         depart=singe_item[1],
+                                                         )
+                            # 当月环
+                            num_3 = self.get_target_data(data_dict=self.company_sheet_detail,
+                                                         company=company_index,
+                                                         date=self.get_compare_date(date_index)[0],
+                                                         code=singe_item[0],
+                                                         depart=singe_item[1]
+                                                         , )
+
+                            if num_2 is None or int(num_2[3]) == 0:
+                                tong_data = "0"
+                            else:
+                                tong_data = str((int(num_1) - int(num_2[3])) / int(num_2[3]))
+
+                            if num_3 is None or int(num_3[3]) == 0:
+                                circle_data = "0"
+                            else:
+                                circle_data = str((int(num_1) - int(num_3[3])) / int(num_3[3]))
+
+                            # 当年同
+                            num_a = singe_item[4]
+                            num_b = self.get_target_data(data_dict=self.company_sheet_detail,
+                                                         company=company_index,
+                                                         date=self.get_compare_date(date_index)[1],
+                                                         code=singe_item[0],
+                                                         depart=singe_item[1],
+                                                         )
+                            if num_b is None or int(num_b[4]) == 0:
+                                year_tong_data = "0"
+                            else:
+                                year_tong_data = str((int(num_a) - int(num_b[4]) / int(num_b[4])))
+
+                            new_singe_item = singe_item[:]
+                            new_singe_item.append(tong_data)
+                            new_singe_item.append(circle_data)
+                            new_singe_item.append(year_tong_data)
+                            self.company_sheet_detail[company_index][date_index][level_meg]["data"][
+                                data_index] = new_singe_item
+
+    def get_compare_date(self, data_string: str):
+        date_data = data_string[-4:]
+        company_head = data_string[:-4]
+        tong_bi = company_head + str(int(date_data) - 100)
+        if date_data[-2:] == "01":
+            circle_bi = company_head + str(int(date_data[0:2]) - 1) + str(12)
+        else:
+            circle_bi = company_head + str(int(date_data) - 1)
+        return circle_bi, tong_bi
+
+    def get_target_data(self, data_dict, company, date, code, depart):
+        level = "Level1"
+        if len(code) == 4:
+            level = "Level1"
+        elif len(code) == 7:
+            level = "Level2"
+        elif len(code) == 10:
+            level = "Level3"
+        elif len(code) == 13:
+            level = "Level4"
+        elif len(code) == 16:
+            level = "Level5"
+
+        try:
+            data_temp = data_dict[company][date][level]["data"]
+        except:
+            return None
+
+        if data_temp:
+            exist_flag = 0
+            for item in data_temp:
+                if item[0] == code and depart == item[1]:
+                    exist_flag = 1
+                    return item
+            if exist_flag == 0:
+                return None
 
 
 if __name__ == '__main__':

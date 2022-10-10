@@ -31,7 +31,7 @@ class QueryView:
         self.basic_frame.grid_rowconfigure(0, weight=1, minsize=self.basic_frame.winfo_reqheight())
         self.basic_frame.grid_columnconfigure(0, weight=2)
         self.basic_frame.grid_columnconfigure(1, weight=4)
-        self.basic_frame.grid_columnconfigure(2, weight=1, minsize=self.basic_frame.winfo_reqwidth() / 7 )  # minsize=self.basic_frame.winfo_reqwidth() / 3
+        self.basic_frame.grid_columnconfigure(2, weight=1, minsize=self.basic_frame.winfo_reqwidth() / 7)
         self.basic_frame.place(relx=0, rely=0)
 
         # 选项视图
@@ -161,7 +161,7 @@ class QueryView:
         构建表格，没有数据
         :return:
         """
-        tableColumns = ['公司', '项目', '费用类别', '部门', '当月金额', '当年累积', '同比', '环比']
+        tableColumns = ['公司', '项目', '费用类别', '部门', '当月金额', '当年累积', '当月同比', '当月环比', "当年同比"]
         tableValues = [
         ]
         # 设置滚动条
@@ -181,7 +181,7 @@ class QueryView:
         x_scroll.config(command=self.table.xview)
         y_scroll.config(command=self.table.yview)
         self.table.pack()  # TreeView加入frame
-        # ['公司', '项目', '费用类别', '部门', '当月金额', '当年累积', '同比', '环比']
+        # ['公司', '项目', '费用类别', '部门', '当月金额', '当年累积', '当月同比', '当月环比', '当年同比']
         self.table.heading(column=0, text="公司", anchor=tkinter.CENTER)
         self.table.column("公司", width=150, anchor=tkinter.CENTER)
 
@@ -197,18 +197,21 @@ class QueryView:
         self.table.heading(column=4, text="当月金额", anchor=tkinter.CENTER)
         self.table.column("当月金额", width=100, anchor=tkinter.CENTER)
 
-        self.table.heading(column=5, text="当年累积", anchor=tkinter.CENTER)
-        self.table.column("当年累积", width=100, anchor=tkinter.CENTER)
+        self.table.heading(column=5, text="当年累计", anchor=tkinter.CENTER)
+        self.table.column("当年累计", width=100, anchor=tkinter.CENTER)
 
-        self.table.heading(column=6, text="同比", anchor=tkinter.CENTER)
-        self.table.column("同比", width=100, anchor=tkinter.CENTER)
+        self.table.heading(column=6, text="当月同比", anchor=tkinter.CENTER)
+        self.table.column("当月同比", width=100, anchor=tkinter.CENTER)
 
-        self.table.heading(column=7, text="环比", anchor=tkinter.CENTER)
-        self.table.column("环比", width=100, anchor=tkinter.CENTER)
+        self.table.heading(column=7, text="当月环比", anchor=tkinter.CENTER)
+        self.table.column("当月环比", width=100, anchor=tkinter.CENTER)
+
+        self.table.heading(column=8, text="当年同比", anchor=tkinter.CENTER)
+        self.table.column("当年同比", width=100, anchor=tkinter.CENTER)
 
     def create_export_view(self):
         export_button = ttk.Button(self.export_frame, text="导出为Excel", command=self.export_excel)
-        export_button.place(relx=0.1, rely=0.9)
+        export_button.place(relx=0.1, rely=0.8)
 
     def export_excel(self):
         pass
