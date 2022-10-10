@@ -79,27 +79,30 @@ class FirstDeal:
         """
         组装单张表格里面的所有数据
         page_data = {
-            "Leval1": {"code": [], "data": [
-                                            ["科目代码","部门","项目","本期借方发生","本期借方累积"],
-                                            ]
+            "Level1": {"code": {
+                                "部门":"code"
+                                },
+                        "data": [
+                                    ["科目代码","部门","项目","本期借方发生","本期借方累积"],
+                                ]
                     },
-            "Leval2": {"code": [], "data": []},
-            "Leval3": {"code": [], "data": []},
-            "Leval4": {"code": [], "data": []},
-            "Leval5": {"code": [], "data": []},
+            "Level2": {"code": [], "data": []},
+            "Level3": {"code": [], "data": []},
+            "Level4": {"code": [], "data": []},
+            "Level5": {"code": [], "data": []},
              }
         :return: page_data
         """
         # 预设数据
         page_data = {
-                    "Leval1": {"code": [], "data": []},
-                    "Leval2": {"code": [], "data": []},
-                    "Leval3": {"code": [], "data": []},
-                    "Leval4": {"code": [], "data": []},
-                    "Leval5": {"code": [], "data": []},
+                    "Level1": {"code": {}, "data": []},
+                    "Level2": {"code": {}, "data": []},
+                    "Level3": {"code": {}, "data": []},
+                    "Level4": {"code": {}, "data": []},
+                    "Level5": {"code": {}, "data": []},
                      }
         # 有效一级标题
-        useful_leval_1 = ["6601", "6602", "6603"]
+        useful_Level_1 = ["6601", "6602", "6603"]
 
         for data_index in data_list:
             # 遍历所有数据
@@ -107,42 +110,41 @@ class FirstDeal:
                 # 无效数据第一批次就跳过
                 pass
             else:
-                for useful_leval in useful_leval_1:
+                for useful_Level in useful_Level_1:
                     # 只针对有效一级标题下的所有数据
-                    if useful_leval in data_index[0]:
+                    if useful_Level in data_index[0]:
                         # 有效数据
-
                         # ["科目代码","部门","项目","本期借方发生","本期借方累积"]
                         data_detail = [data_index[0], data_index[1], data_index[2], data_index[7], data_index[9]]
                         # 组织一级标题及数据
                         if len(data_index[0]) == 4 and data_index[2] is None:
-                            page_data["Leval1"]["code"].append(data_index[0])
+                            page_data["Level1"]["code"][data_index[1]] = data_index[0]
                         elif len(data_index[0]) == 4 and data_index[2] is not None:
-                            page_data["Leval1"]["data"].append(data_detail)
+                            page_data["Level1"]["data"].append(data_detail)
 
                         # 组织二级
                         elif len(data_index[0]) == 7 and data_index[2] is None:
-                            page_data["Leval2"]["code"].append(data_index[0])
+                            page_data["Level2"]["code"][data_index[1]] = data_index[0]
                         elif len(data_index[0]) == 7 and data_index[2] is not None:
-                            page_data["Leval2"]["data"].append(data_detail)
+                            page_data["Level2"]["data"].append(data_detail)
 
                         # 组织三级
                         elif len(data_index[0]) == 10 and data_index[2] is None:
-                            page_data["Leval3"]["code"].append(data_index[0])
+                            page_data["Level3"]["code"][data_index[1]] = data_index[0]
                         elif len(data_index[0]) == 10 and data_index[2] is not None:
-                            page_data["Leval3"]["data"].append(data_detail)
+                            page_data["Level3"]["data"].append(data_detail)
 
                         # 组织四级
                         elif len(data_index[0]) == 13 and data_index[2] is None:
-                            page_data["Leval4"]["code"].append(data_index[0])
+                            page_data["Level4"]["code"][data_index[1]] = data_index[0]
                         elif len(data_index[0]) == 13 and data_index[2] is not None:
-                            page_data["Leval4"]["data"].append(data_detail)
+                            page_data["Level4"]["data"].append(data_detail)
 
                         # 组织五级
                         elif len(data_index[0]) == 16 and data_index[2] is None:
-                            page_data["Leval5"]["code"].append(data_index[0])
+                            page_data["Level5"]["code"][data_index[1]] = data_index[0]
                         elif len(data_index[0]) == 16 and data_index[2] is not None:
-                            page_data["Leval5"]["data"].append(data_detail)
+                            page_data["Level5"]["data"].append(data_detail)
                     else:
                         continue
         return page_data
@@ -158,6 +160,9 @@ class FirstDeal:
         self.time_data = list(self.time_data)
         self.time_data.sort()
         return self.time_data
+
+    def calculate_year_basis(self):
+        pass
 
 
 if __name__ == '__main__':

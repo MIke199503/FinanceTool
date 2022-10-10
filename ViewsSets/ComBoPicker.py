@@ -29,7 +29,7 @@ class Picker(ttk.Frame):
 
         self._command = command
         self.index = 0
-        Frame.__init__(self, master, borderwidth=borderwidth, width=600, height=10, relief=relief)
+        Frame.__init__(self, master, borderwidth=borderwidth,  height=10, relief=relief) # width=400,
 
         self.bind("<FocusIn>", lambda event: self.event_generate('<<PickerFocusIn>>'))
         self.bind("<FocusOut>", lambda event: self.event_generate('<<PickerFocusOut>>'))
