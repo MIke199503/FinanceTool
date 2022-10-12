@@ -11,16 +11,33 @@ from DataModule.BasicMessage import company_abbreviation
 
 
 class Dynamic_Data:
+    """
+    帮助获取一些动态数据
+    """
     def __init__(self, data_resource: FirstDeal):
+        """
+        需要有基础表单数据
+        :param data_resource:FirstDeal
+        """
         self.resource = data_resource
         self.level_list = ["Level1", "Level2", "Level3", "Level4", "Level5"]
 
     def time_choose(self):
+        """
+        获取可用时间序列
+        :return:
+        """
         x = self.resource.get_time_data()
         x.insert(0, "全选")
         return x
 
     def get_project_items(self, company, date):
+        """
+        获取有效的project选项
+        :param company: 公司名列表（全称）
+        :param date: 日期
+        :return:
+        """
         project_items = set()
         company_abb_list = []
         if company != [""] and date != [""]:
@@ -42,7 +59,3 @@ class Dynamic_Data:
             return project_items
         return []
 
-
-if __name__ == '__main__':
-    xa = Dynamic_Data(FirstDeal("/Users/MikeImac/Desktop/FinanceTool/经营检测表（费用明细表）数据底稿.xlsx"))
-    xa.time_choose()

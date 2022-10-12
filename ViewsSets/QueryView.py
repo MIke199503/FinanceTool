@@ -62,6 +62,12 @@ class QueryView:
         self.create_export_view()
 
     def valid_company_and_get_next_project(self, event):
+        """
+        验证日期及公司的选项是否符合规矩。
+        并且，获取符合要求的项目内容。
+        :param event: FocusOut
+        :return:
+        """
         if event.widget == self.company_combo:
             company_choose_data = self.company_combo.get_values().split(',')
             time_choose_data = self.date_combo.get_values().split(',')
@@ -77,6 +83,11 @@ class QueryView:
                 self.project_combo.hide_picker()
 
     def get_next_company(self, event):
+        """
+        根据日期设置符合要求的公司选项。
+        :param event: FocusOut & FocusIn
+        :return:
+        """
         if event.widget == self.date_combo or event.widget == self.company_combo:
             self.company_list.clear()
             time_choose_data = self.date_combo.get_values().split(',')
@@ -89,12 +100,6 @@ class QueryView:
             self.company_list = list(set(self.company_list))
             self.company_list.insert(0, "全选")
             self.company_combo.config_self(values=self.company_list)
-            # self.company_combo.hide_picker()
-
-    #
-    # def update_company_picker_values(self, event):
-    #     if event.widget == self.company_combo:
-
 
     def create_choose_item(self):
         """
@@ -259,12 +264,3 @@ class QueryView:
 
     def export_excel(self):
         pass
-
-
-if __name__ == '__main__':
-    root = tkinter.Tk()
-    root.geometry("1920x1080")
-    root.configure(background="white")
-    root.resizable = False
-    QueryView(root_page=root,)
-    root.mainloop()
