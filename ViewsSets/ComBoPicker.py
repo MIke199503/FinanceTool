@@ -29,17 +29,21 @@ class Picker(ttk.Frame):
 
         self._command = command
         self.index = 0
-        Frame.__init__(self, master, borderwidth=borderwidth,  height=10, relief=relief) # width=400,
+
+        Frame.__init__(self, master, borderwidth=borderwidth,  height=10, relief=relief)  # width=400,
 
         self.bind("<FocusIn>", lambda event: self.event_generate('<<PickerFocusIn>>'))
         self.bind("<FocusOut>", lambda event: self.event_generate('<<PickerFocusOut>>'))
         F = LabelFrame(self)
         F.pack(fill='x')
         self.canvas = Canvas(F, scrollregion=(0, 0, 500, (len(self._values) * 21)))
+
         vbar = Scrollbar(F, orient=VERTICAL)
         vbar.pack(side=RIGHT, fill=Y)
-        frame = Frame(self.canvas)
         vbar.config(command=self.canvas.yview)
+
+        frame = Frame(self.canvas)
+
         # self.canvas.pack(side='left',fill='x',expand=True)
         self.canvas.create_window((0, 0,), window=frame, anchor='nw', tags='frame')
 
@@ -79,12 +83,13 @@ class Picker(ttk.Frame):
 
 
 class Combopicker(ttk.Entry, Picker):
-    def __init__(self, master, values=[], entryvar=None, entrywidth=None, entrystyle=None, onselect=None,
+    def __init__(self, master, values=[], target=None, entryvar=None, entrywidth=None, entrystyle=None, onselect=None,
                  activebackground='#b1dcfb', activeforeground='black', selectbackground='#003eff',
                  selectforeground='red', borderwidth=1, relief="solid"):
 
         self.values = values
         self.master = master
+        self.target = target
         self.activeforeground = activeforeground
         self.activebackground = activebackground
         self.selectbackground = selectbackground
@@ -154,9 +159,6 @@ class Combopicker(ttk.Entry, Picker):
                     temp_value += ","
                 temp_value += str(item)
         self.entry_var.set(temp_value)
-        # 可以通过复选框的variable来让勾选中或取消，但下面也行，问题不大
-        # 刷新
-        # if all_name == str(SELECTED):
         self.hide_picker()
         self.show_picker()
 
@@ -190,7 +192,10 @@ class Combopicker(ttk.Entry, Picker):
             self.picker_frame.destroy()
 
         self._is_menuoptions_visible = False
-        # print(self.entry_var.get())
+
+    def config_self(self, values):
+        self.values = values
 
     def get_values(self):
         return self.entry_var.get()
+

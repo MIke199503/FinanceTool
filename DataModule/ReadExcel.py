@@ -16,7 +16,7 @@ class FirstDeal:
     def __init__(self, filepath):
         self.file_path = filepath
         self.company_sheet_detail = {}  # 所有数据
-        self.time_data = set()  # 可选日期
+        self.time_data = []  # 可选日期
 
         # 尝试打开文件，得到wb
         try:
@@ -27,6 +27,7 @@ class FirstDeal:
         self.deal_sheets()
         self.get_time_data()
         self.calculate_year_basis()
+        BasicMessage.time_data = self.time_data
 
     def deal_sheets(self):
         """
@@ -155,6 +156,7 @@ class FirstDeal:
         获取表单中存在的有效数据，方便后续筛选的时候使用
         :return:self.time_data
         """
+        self.time_data = set()
         for company in self.company_sheet_detail.keys():
             for company_date in self.company_sheet_detail[company].keys():
                 self.time_data.add(company_date[-4:])

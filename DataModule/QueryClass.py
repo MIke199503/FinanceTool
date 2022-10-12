@@ -17,9 +17,6 @@ class Query_Module:
     def query(self, date, company, project, cost_categories, depart):
         return_data_module = ["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积"]
 
-    # def dynamic_query_data(self):
-    #     pass
-
 
 if __name__ == '__main__':
     a = ReadExcel.FirstDeal("/Users/MikeImac/Desktop/FinanceTool/经营检测表（费用明细表）数据底稿.xlsx")

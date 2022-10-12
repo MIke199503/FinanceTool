@@ -8,21 +8,29 @@
 """
 
 import tkinter
+from tkinter.messagebox import showerror
 from tkinter import ttk
 from ComBoPicker import Combopicker
 from DataModule import BasicMessage
+from DataModule.GetDynamicData import Dynamic_Data
 
 
 class QueryView:
-    def __init__(self, root_page):
+    def __init__(self, root_page, data_resource=None):
         """
         三分布局，三个Frame，打底
         :param root_page:父级视图
         """
+        self.data_resource = data_resource
+
+        self.dynamic = Dynamic_Data(data_resource=self.data_resource)
+
         self.table = None
         self.project_combo = None
         self.company_combo = None
         self.date_combo = None
+
+        self.company_list = []
 
         self.root = root_page  # 父级视图
 
@@ -53,6 +61,41 @@ class QueryView:
         self.create_tree_view()
         self.create_export_view()
 
+    def valid_company_and_get_next_project(self, event):
+        if event.widget == self.company_combo:
+            company_choose_data = self.company_combo.get_values().split(',')
+            time_choose_data = self.date_combo.get_values().split(',')
+            if "全选" in time_choose_data:
+                time_choose_data.remove("全选")
+            if "全选" in company_choose_data:
+                company_choose_data.remove("全选")
+            if time_choose_data == [""] or company_choose_data == [""]:
+                showerror(title="选项错误", message="日期及公司不能为空")
+            else:
+                data = self.dynamic.get_project_items(company=company_choose_data, date=time_choose_data)
+                self.project_combo.config_self(values=data)
+                self.project_combo.hide_picker()
+
+    def get_next_company(self, event):
+        if event.widget == self.date_combo or event.widget == self.company_combo:
+            self.company_list.clear()
+            time_choose_data = self.date_combo.get_values().split(',')
+            if "全选" in time_choose_data:
+                time_choose_data.remove("全选")
+            for company in self.data_resource.company_sheet_detail.keys():
+                for company_date in self.data_resource.company_sheet_detail[company].keys():
+                    if company_date[-4:] in time_choose_data:
+                        self.company_list.append(BasicMessage.get_full_by_abb(company))
+            self.company_list = list(set(self.company_list))
+            self.company_list.insert(0, "全选")
+            self.company_combo.config_self(values=self.company_list)
+            # self.company_combo.hide_picker()
+
+    #
+    # def update_company_picker_values(self, event):
+    #     if event.widget == self.company_combo:
+
+
     def create_choose_item(self):
         """
         构建详细的界面
@@ -66,8 +109,9 @@ class QueryView:
         time_label = tkinter.Label(self.choose_frame, text="请选择日期：（必选）", justify="left", anchor="w", padx=2)
         time_label.grid(row=0, column=0, sticky=tkinter.NSEW)
 
-        self.date_combo = Combopicker(self.choose_frame, values=["全选", "2201", "2202", "2203"])
+        self.date_combo = Combopicker(self.choose_frame, values=self.dynamic.time_choose())
         self.date_combo.grid(row=0, column=1, sticky=tkinter.NSEW)
+        self.date_combo.bind("<FocusOut>", self.get_next_company)
 
         company_label = tkinter.Label(self.choose_frame, text="请选择公司：（必选）", justify="left", anchor="w", padx=2)
         company_label.grid(row=1, column=0, sticky=tkinter.NSEW)
@@ -75,6 +119,8 @@ class QueryView:
         _data = list(BasicMessage.company_abbreviation.keys())
         _data.insert(0, "全选")
         self.company_combo = Combopicker(self.choose_frame, values=_data)
+        self.company_combo.bind("<FocusIn>", self.get_next_company)
+        self.company_combo.bind("<FocusOut>", self.valid_company_and_get_next_project)
         self.company_combo.grid(row=1, column=1, sticky=tkinter.NSEW)
 
         project_label = tkinter.Label(self.choose_frame, text="请选择项目：", justify="left", anchor="w", padx=2)
@@ -162,8 +208,6 @@ class QueryView:
         :return:
         """
         tableColumns = ['公司', '项目', '费用类别', '部门', '当月金额', '当年累计', '当月同比', '当月环比', "当年同比"]
-        tableValues = [
-        ]
         # 设置滚动条
         x_scroll = tkinter.Scrollbar(self.tree_frame, orient=tkinter.HORIZONTAL)
         y_scroll = tkinter.Scrollbar(self.tree_frame, orient=tkinter.VERTICAL)
@@ -222,5 +266,5 @@ if __name__ == '__main__':
     root.geometry("1920x1080")
     root.configure(background="white")
     root.resizable = False
-    QueryView(root_page=root)
+    QueryView(root_page=root,)
     root.mainloop()

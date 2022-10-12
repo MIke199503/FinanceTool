@@ -7,7 +7,6 @@
 @Date    ：2022/10/8 10:47 AM
 """
 
-
 #  公司缩写
 company_abbreviation = {"成都环宇知了科技有限公司": "环宇",
                         "成都标学科技有限公司": "标学",
@@ -27,6 +26,11 @@ company_abbreviation = {"成都环宇知了科技有限公司": "环宇",
                         "之了课堂（成都）科技有限公司": "之了课堂",
                         }
 
+template_data = {v: k for k, v in company_abbreviation.items()}
+
+
+def get_full_by_abb(abb):
+    return template_data[abb]
 
 # 字典样式
 # data = {"公式简称1": {
@@ -65,4 +69,11 @@ company_abbreviation = {"成都环宇知了科技有限公司": "环宇",
 #                                 }
 #                     }
 # }
+
+
+time_data = ["1", "2", "3"]
+time_choose = None
+
+def get_time_data():
+    return time_data
 

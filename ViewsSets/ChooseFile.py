@@ -39,12 +39,12 @@ class ChooseFile:
         filePath = fp.askopenfilename(title="请选择数据源Excel文件", filetypes=[("Excel文件", ".xlsx")])
 
         try:
-            readExcel.FirstDeal(filepath=filePath)
+            file_data = readExcel.FirstDeal(filepath=filePath)
         except:
             showerror(title="很可惜，发生了一点错误。:", message="你所选择的文件不符合要求，请仔细核对并重新选择。")
         else:
             self.page.destroy()  # shut down this view
-            QueryView(root_page=self.root)
+            QueryView(root_page=self.root, data_resource=file_data)
             # start the next view ,we need resource because want to economize the internal memory.
             # it's not need to open file twice .
 
