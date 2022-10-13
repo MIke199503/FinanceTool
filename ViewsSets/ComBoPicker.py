@@ -6,7 +6,7 @@
 @Author  ：朱桃禾 MikePy
 @Date    ：2022/10/9 10:11 AM 
 """
-
+import tkinter
 import tkinter.ttk as ttk
 from tkinter import *
 
@@ -15,6 +15,7 @@ class Picker(ttk.Frame):
     def __init__(self, master=None, activebackground='#b1dcfb', values=[], entry_wid=None, activeforeground='black',
                  selectbackground='#003eff', selectforeground='white', command=None, borderwidth=1, relief="solid"):
 
+        super().__init__(master, borderwidth=borderwidth, relief=relief)
         self._selected_item = None
 
         self._values = values
@@ -30,7 +31,7 @@ class Picker(ttk.Frame):
         self._command = command
         self.index = 0
 
-        Frame.__init__(self, master, borderwidth=borderwidth,  height=10, relief=relief)  # width=400,
+        Frame.__init__(self, master, borderwidth=borderwidth,  height=20, relief=relief)  # width=400,
 
         self.bind("<FocusIn>", lambda event: self.event_generate('<<PickerFocusIn>>'))
         self.bind("<FocusOut>", lambda event: self.event_generate('<<PickerFocusOut>>'))
@@ -74,6 +75,7 @@ class Picker(ttk.Frame):
             self.dict_checkbutton[i].bind("<MouseWheel>", self.processWheel)
         self.bind("<MouseWheel>", self.processWheel)
 
+
     def processWheel(self, event):
         a = int(-event.delta)
         if a > 0:
@@ -107,7 +109,7 @@ class Combopicker(ttk.Entry, Picker):
         if entrystyle is not None:
             entry_config["style"] = entrystyle
 
-        Entry.__init__(self, master, textvariable=self.entry_var, **entry_config, width=35, state="normal")
+        Entry.__init__(self, master, textvariable=self.entry_var, **entry_config, width=30, state="normal")
 
         self._is_menuoptions_visible = False
 
@@ -199,3 +201,9 @@ class Combopicker(ttk.Entry, Picker):
     def get_values(self):
         return self.entry_var.get()
 
+
+if __name__ == '__main__':
+    root = tkinter.Tk()
+    picker = Picker(root, values=["Author", "John", "Mohan", "James", "Ankur", "Robert"], entry_wid=tkinter.StringVar())
+    picker.pack()
+    root.mainloop()

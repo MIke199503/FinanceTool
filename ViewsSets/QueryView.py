@@ -13,6 +13,8 @@ from tkinter import ttk
 from ComBoPicker import Combopicker
 from DataModule import BasicMessage
 from DataModule.GetDynamicData import Dynamic_Data
+from CheckList import CheckBox
+from ViewsSets.CheckList import CheckBox
 
 
 class QueryView:
@@ -21,6 +23,11 @@ class QueryView:
         三分布局，三个Frame，打底
         :param root_page:父级视图
         """
+        self.leval_1_picker = None
+        self.leval_2_picker = None
+        self.leval_3_picker = None
+
+        self.cost_data = None
         self.data_resource = data_resource
 
         self.dynamic = Dynamic_Data(data_resource=self.data_resource)
@@ -61,6 +68,28 @@ class QueryView:
         self.create_tree_view()
         self.create_export_view()
 
+    def get_next_company(self, event):
+        """
+        根据日期设置符合要求的公司选项。
+        :param event: FocusOut & FocusIn
+        :return:
+        """
+        if event.widget == self.date_combo or event.widget == self.company_combo:
+            self.company_list.clear()
+            time_choose_data = self.date_combo.get_values().split(',')
+            if time_choose_data == [""]:
+                xa = list(BasicMessage.company_abbreviation.keys())
+                self.company_list = xa[:]
+            if "全选" in time_choose_data:
+                time_choose_data.remove("全选")
+            for company in self.data_resource.company_sheet_detail.keys():
+                for company_date in self.data_resource.company_sheet_detail[company].keys():
+                    if company_date[-4:] in time_choose_data:
+                        self.company_list.append(BasicMessage.get_full_by_abb(company))
+            self.company_list = list(set(self.company_list))
+            self.company_list.insert(0, "全选")
+            self.company_combo.config_self(values=self.company_list)
+
     def valid_company_and_get_next_project(self, event):
         """
         验证日期及公司的选项是否符合规矩。
@@ -77,29 +106,36 @@ class QueryView:
                 company_choose_data.remove("全选")
             if time_choose_data == [""] or company_choose_data == [""]:
                 showerror(title="选项错误", message="日期及公司不能为空")
+                if time_choose_data == [""]:
+                    self.date_combo.focus_set()
+                if company_choose_data == [""]:
+                    self.company_combo.focus_set()
             else:
                 data = self.dynamic.get_project_items(company=company_choose_data, date=time_choose_data)
                 self.project_combo.config_self(values=data)
                 self.project_combo.hide_picker()
 
-    def get_next_company(self, event):
+    def get_cost_category_data(self):
         """
-        根据日期设置符合要求的公司选项。
-        :param event: FocusOut & FocusIn
+        获取费用类比选取所需的全部数据，后续的操作都是在这个基础上去更新
         :return:
         """
-        if event.widget == self.date_combo or event.widget == self.company_combo:
-            self.company_list.clear()
-            time_choose_data = self.date_combo.get_values().split(',')
-            if "全选" in time_choose_data:
-                time_choose_data.remove("全选")
-            for company in self.data_resource.company_sheet_detail.keys():
-                for company_date in self.data_resource.company_sheet_detail[company].keys():
-                    if company_date[-4:] in time_choose_data:
-                        self.company_list.append(BasicMessage.get_full_by_abb(company))
-            self.company_list = list(set(self.company_list))
-            self.company_list.insert(0, "全选")
-            self.company_combo.config_self(values=self.company_list)
+        company_choose_data = self.company_combo.get_values().split(',')
+        time_choose_data = self.date_combo.get_values().split(',')
+        project_data = self.project_combo.get_values()
+
+        if "全选" in time_choose_data:
+            time_choose_data.remove("全选")
+        if "全选" in company_choose_data:
+            company_choose_data.remove("全选")
+        if "全选" in project_data:
+            project_data.remove("全选")
+
+        self.cost_data = self.dynamic.get_cost_category(company=company_choose_data, date=time_choose_data, project=project_data)
+        return self.cost_data
+
+    def get_next_level2_data(self):
+        pass
 
     def create_choose_item(self):
         """
@@ -131,7 +167,7 @@ class QueryView:
         project_label = tkinter.Label(self.choose_frame, text="请选择项目：", justify="left", anchor="w", padx=2)
         project_label.grid(row=2, column=0, sticky=tkinter.NSEW)
 
-        self.project_combo = Combopicker(self.choose_frame, values=["全选", "1", "2"])
+        self.project_combo = Combopicker(self.choose_frame, values=[""])
         self.project_combo.grid(row=2, column=1, sticky=tkinter.NSEW)
 
         cost_label = tkinter.Label(self.choose_frame, text="请选择费用类别：", justify="left", anchor="w", padx=2)
@@ -154,6 +190,7 @@ class QueryView:
         覆盖现有视图，弹出新界面供选择
         :return:
         """
+        self.get_cost_category_data()
         choose_page_basic_frame = tkinter.Frame(self.root,
                                                 width=1920,
                                                 height=1080,
@@ -171,26 +208,24 @@ class QueryView:
                                       justify="left")
         leval_1_label.grid(row=0, column=0, sticky=tkinter.NSEW)
 
-        var = tkinter.StringVar()
-        var.set("鸡蛋 鸭蛋 鹅蛋 李狗蛋 鸡蛋 鸭蛋 鹅蛋 李狗蛋 鸡蛋 鸭蛋 鹅蛋 李狗蛋 鸡蛋 鸭蛋 鹅蛋 李狗蛋")
-        leval_1_picker = tkinter.Listbox(choose_page_basic_frame, listvariable=var, selectmode="multiple")
-        leval_1_picker.grid(row=1, column=0, sticky=tkinter.NSEW)
+        self.leval_1_picker = CheckBox(choose_page_basic_frame, values=self.cost_data["Level1"])
+        self.leval_1_picker.grid(row=1, column=0, sticky=tkinter.NSEW)
 
         leval_2_label = tkinter.Label(choose_page_basic_frame, text="请选择二级科目",
                                       anchor="w",
                                       justify="left")
         leval_2_label.grid(row=0, column=1, sticky=tkinter.NSEW)
 
-        leval_2_picker = tkinter.Listbox(choose_page_basic_frame, listvariable=var, selectmode="multiple")
-        leval_2_picker.grid(row=1, column=1, sticky=tkinter.NSEW)
+        self.leval_2_picker = CheckBox(choose_page_basic_frame, values=self.cost_data["Level2"])
+        self.leval_2_picker.grid(row=1, column=1, sticky=tkinter.NSEW)
 
         leval_3_label = tkinter.Label(choose_page_basic_frame, text="请选择三级科目",
                                       anchor="w",
                                       justify="left")
         leval_3_label.grid(row=0, column=2, sticky=tkinter.NSEW)
 
-        leval_3_picker = tkinter.Listbox(choose_page_basic_frame, listvariable=var, selectmode="multiple")
-        leval_3_picker.grid(row=1, column=2, sticky=tkinter.NSEW)
+        self.leval_3_picker = CheckBox(choose_page_basic_frame, values=self.cost_data["Level3"])
+        self.leval_3_picker.grid(row=1, column=2, sticky=tkinter.NSEW)
 
         button_frame = tkinter.Frame(choose_page_basic_frame)
         button_frame.grid(row=2, column=2)
