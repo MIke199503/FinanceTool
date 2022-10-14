@@ -139,9 +139,37 @@ class Dynamic_Data:
             sort_data[x] = list_convert
         return sort_data
 
-    def get_depart_category(self):
-        """
-        获取可供选择的部门信息
-        :return:
-        """
-        pass
+    def get_depart_category(self, date_choose_list, company_choose_list, project_choose_list, cost_choose_list):
+        date_choose_list = date_choose_list
+        company_choose_list = company_choose_list
+        project_choose_list = project_choose_list
+        cost_choose_list = cost_choose_list
+
+        depart = set()
+
+        # 有效的日期
+        useful_company = []
+        for date in date_choose_list:
+            for company in company_choose_list:
+                com_abb = company_abbreviation[company]
+                com_date = com_abb+date
+                if com_date in self.resource.company_sheet_detail[com_abb]:
+                    useful_company.append(com_date)
+        print(useful_company)
+        for use_item in useful_company:
+            company_data = self.resource.company_sheet_detail[use_item[:-4]][use_item]
+            for index, item in enumerate(cost_choose_list):
+                print(item)
+                item_data = [x.split('-')[0] for x in item] if not item else ""
+                print(item_data)
+                level_message = "Level" + str(index+1)
+                for tem_data in company_data[level_message]["data"]:
+                    if tem_data[2] in project_choose_list and tem_data[0] in item_data:
+                        depart.add(tem_data[1])
+        return depart
+
+
+
+
+
+
