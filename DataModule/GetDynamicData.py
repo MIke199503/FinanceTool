@@ -66,12 +66,11 @@ class Dynamic_Data:
             return project_items
         return []
 
-    def deal_code_deep(self, company, date, level, data):
+    def deal_code_deep(self, company, date, data):
         """
         根据给定的数据，将其纵深相关的费用类别都添加进去
         :param company: 具体的公司简称
         :param date: 公司简称+时间
-        :param level: 等级
         :param data: 数据行
         :return: None
         """
@@ -108,6 +107,12 @@ class Dynamic_Data:
                                           "Level5": set(),
                                           }
         """
+        self.cost_category_return_data = {"Level1": set(),
+                                          "Level2": set(),
+                                          "Level3": set(),
+                                          "Level4": set(),
+                                          "Level5": set(),
+                                          }
         for x in company:
             company_abb = company_abbreviation[x]
             com_date = list(self.resource.company_sheet_detail[company_abb].keys())
@@ -125,6 +130,18 @@ class Dynamic_Data:
                             detail_data_list = self.resource.company_sheet_detail[company_abb][company_abb + time][level_index]['data']
                             for item in detail_data_list:
                                 if item[2] in project:
-                                    self.deal_code_deep(company=company_abb, date=company_abb + time, level=level_index,
-                                                        data=item)
-        return self.cost_category_return_data
+                                    self.deal_code_deep(company=company_abb, date=company_abb + time, data=item)
+        sort_data = self.cost_category_return_data.copy()
+
+        for x in sort_data.keys():
+            list_convert = list(sort_data[x])
+            list_convert.sort()
+            sort_data[x] = list_convert
+        return sort_data
+
+    def get_depart_category(self):
+        """
+        获取可供选择的部门信息
+        :return:
+        """
+        pass

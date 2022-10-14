@@ -18,6 +18,11 @@ class CheckBox(ttk.Frame):
         self._selected_item = None
 
         self._values = values
+        if not self._values:
+            pass
+        elif "全选" in self._values:
+            self._values.remove("全选")
+        self._values.insert(0, "全选")
 
         self._sel_bg = select_background
         self._sel_fg = select_foreground
@@ -50,7 +55,10 @@ class CheckBox(ttk.Frame):
         self.item_flag = []
         for index, item in enumerate(self._values):
             var = StringVar()
-            var.trace_add("write", self.data_change_callback)
+            if item == "全选":
+                var.trace_add("write", self.deal_choose_all)
+            else:
+                var.trace_add("write", self.data_change_callback)
             self.item_flag.append(var)
             self.check_item = Checkbutton(frame, text=item, variable=var, offvalue="", onvalue=item, anchor="w")
             self.dict_checkbutton.append(self.check_item)
@@ -61,6 +69,16 @@ class CheckBox(ttk.Frame):
 
         for i in self.dict_checkbutton:
             i.bind("<MouseWheel>", self.processWheel)
+
+    def deal_choose_all(self, var, index, mode):
+        tem = self.item_flag[0].get()
+        if tem == "":
+            for x in range(1, len(self.item_flag)):
+                self.item_flag[x].set("")
+        elif tem == "全选":
+            for x in range(1, len(self.item_flag)):
+                self.item_flag[x].set(self._values[x])
+        self.data_change_callback(var, index, mode)
 
     def data_change_callback(self, var, index, mode):
         if self._command is None:
@@ -77,9 +95,11 @@ class CheckBox(ttk.Frame):
 
     def get_values(self):
         value = []
-        for item in self.item_flag:
-            if item.get() != "":
-                value.append(item.get())
+        for item in range(len(self.item_flag)):
+            if self.item_flag[item].get() == "全选":
+                continue
+            elif self.item_flag[item].get() != "":
+                value.append(self.item_flag[item].get())
         return value
 
 
