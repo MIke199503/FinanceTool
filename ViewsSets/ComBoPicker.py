@@ -37,7 +37,7 @@ class Picker(ttk.Frame):
         self.bind("<FocusOut>", lambda event: self.event_generate('<<PickerFocusOut>>'))
         F = LabelFrame(self)
         F.pack(fill='x')
-        self.canvas = Canvas(F, scrollregion=(0, 0, 500, (len(self._values) * 21)))
+        self.canvas = Canvas(F, scrollregion=(0, 0, 500, (len(self._values) * 30)))
 
         vbar = Scrollbar(F, orient=VERTICAL)
         vbar.pack(side=RIGHT, fill=Y)
@@ -79,9 +79,9 @@ class Picker(ttk.Frame):
     def processWheel(self, event):
         a = int(-event.delta)
         if a > 0:
-            self.canvas.yview_scroll(1, UNITS)
+            self.canvas.yview_scroll(2, UNITS)
         else:
-            self.canvas.yview_scroll(-1, UNITS)
+            self.canvas.yview_scroll(-2, UNITS)
 
 
 class Combopicker(ttk.Entry, Picker):

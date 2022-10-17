@@ -22,6 +22,7 @@ class QueryView:
         三分布局，三个Frame，打底
         :param root_page:父级视图
         """
+
         self.choose_page_basic_frame = None
         self.leval_1_picker = None
         self.leval_2_picker = None
@@ -37,6 +38,7 @@ class QueryView:
         self.project_combo = None
         self.company_combo = None
         self.date_combo = None
+        self.depart_combo = None
 
         self.time_choose_data = []  # 选择的时间信息
         self.company_choose_data = []  # 选择的公司信息
@@ -114,8 +116,8 @@ class QueryView:
         depart_label = tkinter.Label(self.choose_frame, text="请选择部门：", justify="left", anchor="w", padx=2)
         depart_label.grid(row=4, column=0, sticky=tkinter.NSEW)
 
-        depart_combo = Combopicker(self.choose_frame, values=["全选", "1", "2"])
-        depart_combo.grid(row=4, column=1, sticky=tkinter.NSEW)
+        self.depart_combo = Combopicker(self.choose_frame, values=["全选"])
+        self.depart_combo.grid(row=4, column=1, sticky=tkinter.NSEW)
 
         query_button = ttk.Button(self.choose_frame, text="查询", command=self.export_excel)
         query_button.grid(row=5, column=1)
@@ -130,14 +132,22 @@ class QueryView:
                                                      width=1920,
                                                      height=1080,
                                                      )
-        self.choose_page_basic_frame.grid_rowconfigure(0, weight=1, minsize=self.choose_page_basic_frame.winfo_reqheight() / 20)
-        self.choose_page_basic_frame.grid_rowconfigure(1, weight=18, minsize=self.choose_page_basic_frame.winfo_reqheight() * 17 / 20)
-        self.choose_page_basic_frame.grid_rowconfigure(2, weight=1, minsize=self.choose_page_basic_frame.winfo_reqheight() / 20)
-        self.choose_page_basic_frame.grid_rowconfigure(3, weight=1, minsize=self.choose_page_basic_frame.winfo_reqheight() / 20)
-        self.choose_page_basic_frame.grid_columnconfigure(0, weight=1, minsize=self.choose_page_basic_frame.winfo_reqwidth() / 4)
-        self.choose_page_basic_frame.grid_columnconfigure(1, weight=1, minsize=self.choose_page_basic_frame.winfo_reqwidth() / 4)
-        self.choose_page_basic_frame.grid_columnconfigure(2, weight=1, minsize=self.choose_page_basic_frame.winfo_reqwidth() / 4)
-        self.choose_page_basic_frame.grid_columnconfigure(3, weight=1, minsize=self.choose_page_basic_frame.winfo_reqwidth() / 4)
+        self.choose_page_basic_frame.grid_rowconfigure(0, weight=1,
+                                                       minsize=self.choose_page_basic_frame.winfo_reqheight() / 20)
+        self.choose_page_basic_frame.grid_rowconfigure(1, weight=18,
+                                                       minsize=self.choose_page_basic_frame.winfo_reqheight() * 17 / 20)
+        self.choose_page_basic_frame.grid_rowconfigure(2, weight=1,
+                                                       minsize=self.choose_page_basic_frame.winfo_reqheight() / 20)
+        self.choose_page_basic_frame.grid_rowconfigure(3, weight=1,
+                                                       minsize=self.choose_page_basic_frame.winfo_reqheight() / 20)
+        self.choose_page_basic_frame.grid_columnconfigure(0, weight=1,
+                                                          minsize=self.choose_page_basic_frame.winfo_reqwidth() / 4)
+        self.choose_page_basic_frame.grid_columnconfigure(1, weight=1,
+                                                          minsize=self.choose_page_basic_frame.winfo_reqwidth() / 4)
+        self.choose_page_basic_frame.grid_columnconfigure(2, weight=1,
+                                                          minsize=self.choose_page_basic_frame.winfo_reqwidth() / 4)
+        self.choose_page_basic_frame.grid_columnconfigure(3, weight=1,
+                                                          minsize=self.choose_page_basic_frame.winfo_reqwidth() / 4)
 
         leval_1_label = tkinter.Label(self.choose_page_basic_frame, text="请选择一级标题",
                                       anchor="w",
@@ -178,7 +188,7 @@ class QueryView:
         sure_button = ttk.Button(button_frame, text="确认", command=self.click_cost_button, width=20, )
         sure_button.grid(row=0, column=1)
 
-        cancel_button = ttk.Button(button_frame, text="返回", command=self.choose_page_basic_frame.destroy, width=20, )
+        cancel_button = ttk.Button(button_frame, text="返回", command=self.cancel_cost_choose_page, width=20, )
         cancel_button.grid(row=0, column=0)
 
         self.choose_page_basic_frame.place(relx=0, rely=0)
@@ -314,14 +324,16 @@ class QueryView:
         if "全选" in data:
             data.remove("全选")
         if not data:
-            self.leval_2_picker = CheckBox(self.choose_page_basic_frame, values=self.cost_data["Level2"][:], command=self.get_next_level3_data)
+            self.leval_2_picker = CheckBox(self.choose_page_basic_frame, values=self.cost_data["Level2"][:],
+                                           command=self.get_next_level3_data)
         else:
             new_data = []
             for x in data:
                 for y in self.cost_data["Level2"]:
                     if x.split("-")[0] in y:
                         new_data.append(y)
-            self.leval_2_picker = CheckBox(self.choose_page_basic_frame, values=new_data, command=self.get_next_level3_data)
+            self.leval_2_picker = CheckBox(self.choose_page_basic_frame, values=new_data,
+                                           command=self.get_next_level3_data)
         self.leval_2_picker.grid(row=1, column=1, sticky=tkinter.NSEW)
 
     def get_next_level3_data(self):
@@ -334,14 +346,16 @@ class QueryView:
         if "全选" in data:
             data.remove("全选")
         if not data:
-            self.leval_3_picker = CheckBox(self.choose_page_basic_frame, values=self.cost_data["Level3"][:], command=self.get_next_level4_data)
+            self.leval_3_picker = CheckBox(self.choose_page_basic_frame, values=self.cost_data["Level3"][:],
+                                           command=self.get_next_level4_data)
         else:
             new_data = []
             for x in data:
                 for y in self.cost_data["Level3"]:
                     if x.split("-")[0] in y:
                         new_data.append(y)
-            self.leval_3_picker = CheckBox(self.choose_page_basic_frame, values=new_data, command=self.get_next_level4_data)
+            self.leval_3_picker = CheckBox(self.choose_page_basic_frame, values=new_data,
+                                           command=self.get_next_level4_data)
         self.leval_3_picker.grid(row=1, column=2, sticky=tkinter.NSEW)
 
     def get_next_level4_data(self):
@@ -375,16 +389,27 @@ class QueryView:
         cost_level4_choose = self.leval_4_picker.get_values()
         self.cost_choose_data.clear()
         self.cost_choose_data = [cost_level1_choose, cost_level2_choose, cost_level3_choose, cost_level4_choose]
-        print(self.time_choose_data)
-        print(self.company_choose_data)
-        print(self.project_choose_data)
-        print(self.cost_choose_data)
+        data = list(self.dynamic.get_depart_category(date_choose_list=self.time_choose_data,
+                                                     company_choose_list=self.company_choose_data,
+                                                     project_choose_list=self.project_choose_data,
+                                                     cost_choose_list=self.cost_choose_data))
+        data.sort()
+        data.insert(0, "全选")
+        self.depart_combo.config_self(values=data)
         self.choose_page_basic_frame.destroy()
 
-    def pri(self):
-        print(self.date_combo.get())
-        print(self.company_combo.get())
+    def cancel_cost_choose_page(self):
+        """
+        选择费用类别页面的返回按钮回参
+        :return:
+        """
+        self.choose_page_basic_frame.destroy()
+        cost_level1_choose = []
+        cost_level2_choose = []
+        cost_level3_choose = []
+        cost_level4_choose = []
+        self.cost_choose_data.clear()
+        self.cost_choose_data = [cost_level1_choose, cost_level2_choose, cost_level3_choose, cost_level4_choose]
 
     def export_excel(self):
         pass
-

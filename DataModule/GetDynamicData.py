@@ -76,22 +76,28 @@ class Dynamic_Data:
         """
         code = data[0]
         if len(code) >= 16:
-            data_convert = {v: k for k, v in self.resource.company_sheet_detail[company][date]["Level5"]["code"].items()}
+            data_convert = {v: k for k, v in
+                            self.resource.company_sheet_detail[company][date]["Level5"]["code"].items()}
             self.cost_category_return_data["Level5"].add(code + "-" + data_convert[code])
         if len(code) >= 13:
-            data_convert = {v: k for k, v in self.resource.company_sheet_detail[company][date]["Level4"]["code"].items()}
+            data_convert = {v: k for k, v in
+                            self.resource.company_sheet_detail[company][date]["Level4"]["code"].items()}
             self.cost_category_return_data["Level4"].add(code[:13] + "-" + data_convert[code[:13]])
         if len(code) >= 10:
-            data_convert = {v: k for k, v in self.resource.company_sheet_detail[company][date]["Level3"]["code"].items()}
+            data_convert = {v: k for k, v in
+                            self.resource.company_sheet_detail[company][date]["Level3"]["code"].items()}
             self.cost_category_return_data["Level3"].add(code[:10] + "-" + data_convert[code[:10]])
         if len(code) >= 7:
-            data_convert = {v: k for k, v in self.resource.company_sheet_detail[company][date]["Level2"]["code"].items()}
+            data_convert = {v: k for k, v in
+                            self.resource.company_sheet_detail[company][date]["Level2"]["code"].items()}
             self.cost_category_return_data["Level2"].add(code[:7] + "-" + data_convert[code[:7]])
         if len(code) > 4:
-            data_convert = {v: k for k, v in self.resource.company_sheet_detail[company][date]["Level1"]["code"].items()}
+            data_convert = {v: k for k, v in
+                            self.resource.company_sheet_detail[company][date]["Level1"]["code"].items()}
             self.cost_category_return_data["Level1"].add(code[:4] + "-" + data_convert[code[:4]])
         if len(code) == 4:
-            data_convert = {v: k for k, v in self.resource.company_sheet_detail[company][date]["Level1"]["code"].items()}
+            data_convert = {v: k for k, v in
+                            self.resource.company_sheet_detail[company][date]["Level1"]["code"].items()}
             self.cost_category_return_data["Level1"].add(code + "-" + data_convert[code])
 
     def get_cost_category(self, company, date, project):
@@ -124,10 +130,13 @@ class Dynamic_Data:
                                 self.resource.company_sheet_detail[company_abb][company_abb + time][level_index][
                                     "code"].keys())
                             for code_key in code_keys:
-                                data_item = self.resource.company_sheet_detail[company_abb][company_abb + time][level_index]["code"][code_key] + "-" + code_key
+                                data_item = \
+                                    self.resource.company_sheet_detail[company_abb][company_abb + time][level_index][
+                                        "code"][code_key] + "-" + code_key
                                 self.cost_category_return_data[level_index].add(data_item)
                         else:
-                            detail_data_list = self.resource.company_sheet_detail[company_abb][company_abb + time][level_index]['data']
+                            detail_data_list = \
+                                self.resource.company_sheet_detail[company_abb][company_abb + time][level_index]['data']
                             for item in detail_data_list:
                                 if item[2] in project:
                                     self.deal_code_deep(company=company_abb, date=company_abb + time, data=item)
@@ -140,10 +149,20 @@ class Dynamic_Data:
         return sort_data
 
     def get_depart_category(self, date_choose_list, company_choose_list, project_choose_list, cost_choose_list):
+        """
+        根据选择信息，获取对应的部门提示信息，
+        若全选、空选、仅选一级科目，返回所有，若单选选择对应层级的部门信息
+        :param date_choose_list: list
+        :param company_choose_list: list
+        :param project_choose_list: list
+        :param cost_choose_list: list
+        :return: depart部门信息列表
+        """
         date_choose_list = date_choose_list
         company_choose_list = company_choose_list
         project_choose_list = project_choose_list
         cost_choose_list = cost_choose_list
+        cost_choose_list.reverse()
 
         depart = set()
 
@@ -152,24 +171,40 @@ class Dynamic_Data:
         for date in date_choose_list:
             for company in company_choose_list:
                 com_abb = company_abbreviation[company]
-                com_date = com_abb+date
+                com_date = com_abb + date
                 if com_date in self.resource.company_sheet_detail[com_abb]:
                     useful_company.append(com_date)
-        print(useful_company)
+        # 判断筛选逻辑
+        mode = 0
+        if cost_choose_list[0] == [] and cost_choose_list[1] == [] and \
+                cost_choose_list[2] == [] and cost_choose_list[3] == []:
+            mode = 0
+        elif cost_choose_list[1] == [] and cost_choose_list[1] == [] and \
+                cost_choose_list[2] == [] and cost_choose_list[3] != []:
+            mode = 0
+        else:
+            mode = 1
+
+        # 获取数据
         for use_item in useful_company:
             company_data = self.resource.company_sheet_detail[use_item[:-4]][use_item]
-            for index, item in enumerate(cost_choose_list):
-                print(item)
-                item_data = [x.split('-')[0] for x in item] if not item else ""
-                print(item_data)
-                level_message = "Level" + str(index+1)
-                for tem_data in company_data[level_message]["data"]:
-                    if tem_data[2] in project_choose_list and tem_data[0] in item_data:
-                        depart.add(tem_data[1])
+            if mode == 0:
+                for level in self.level_list:
+                    for tem in company_data[level]["data"]:
+                        if tem[2] in project_choose_list:
+                            depart.add(tem[1])
+            elif mode == 1:
+                for index, item in enumerate(cost_choose_list):
+                    item_data = []
+                    if item:
+                        for x in item:
+                            item_data.append(x.split('-')[0])
+                        level_message = "Level" + str(4 - index)
+                        for tem_data in company_data[level_message]["data"]:
+                            if tem_data[2] in project_choose_list and tem_data[0] in item_data:
+                                depart.add(tem_data[1])
+                        break
+                    else:
+                        continue
+
         return depart
-
-
-
-
-
-
