@@ -245,6 +245,10 @@ class QueryView:
         self.table.column("当年同比", width=100, anchor=tkinter.CENTER)
 
     def create_export_view(self):
+        """
+        创建导出Excel按钮
+        :return:
+        """
         export_button = ttk.Button(self.export_frame, text="导出为Excel", command=self.export_excel)
         export_button.place(relx=0.1, rely=0.8)
 
@@ -412,4 +416,8 @@ class QueryView:
         self.cost_choose_data = [cost_level1_choose, cost_level2_choose, cost_level3_choose, cost_level4_choose]
 
     def export_excel(self):
+        """
+        导出Excel文件
+        :return:
+        """
         pass
