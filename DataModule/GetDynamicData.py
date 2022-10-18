@@ -76,29 +76,41 @@ class Dynamic_Data:
         """
         code = data[0]
         if len(code) >= 16:
-            data_convert = {v: k for k, v in
-                            self.resource.company_sheet_detail[company][date]["Level5"]["code"].items()}
-            self.cost_category_return_data["Level5"].add(code + "-" + data_convert[code])
-        if len(code) >= 13:
-            data_convert = {v: k for k, v in
-                            self.resource.company_sheet_detail[company][date]["Level4"]["code"].items()}
-            self.cost_category_return_data["Level4"].add(code[:13] + "-" + data_convert[code[:13]])
+            for x in self.resource.company_sheet_detail[company][date]["Level5"]["code"]:
+                if code in x:
+                    self.cost_category_return_data["Level5"].add(x)
+        if len(code) > 13:
+            for x in self.resource.company_sheet_detail[company][date]["Level4"]["code"]:
+                if code[:13] in x:
+                    self.cost_category_return_data["Level4"].add(x)
+        if len(code) == 13:
+            for x in self.resource.company_sheet_detail[company][date]["Level4"]["code"]:
+                if code[:] in x:
+                    self.cost_category_return_data["Level4"].add(x)
         if len(code) >= 10:
-            data_convert = {v: k for k, v in
-                            self.resource.company_sheet_detail[company][date]["Level3"]["code"].items()}
-            self.cost_category_return_data["Level3"].add(code[:10] + "-" + data_convert[code[:10]])
-        if len(code) >= 7:
-            data_convert = {v: k for k, v in
-                            self.resource.company_sheet_detail[company][date]["Level2"]["code"].items()}
-            self.cost_category_return_data["Level2"].add(code[:7] + "-" + data_convert[code[:7]])
+            for x in self.resource.company_sheet_detail[company][date]["Level3"]["code"]:
+                if code[:10] in x:
+                    self.cost_category_return_data["Level3"].add(x)
+        if len(code) == 10:
+            for x in self.resource.company_sheet_detail[company][date]["Level3"]["code"]:
+                if code[:] in x:
+                    self.cost_category_return_data["Level3"].add(x)
+        if len(code) > 7:
+            for x in self.resource.company_sheet_detail[company][date]["Level2"]["code"]:
+                if code[:7] in x:
+                    self.cost_category_return_data["Level2"].add(x)
+        if len(code) == 7:
+            for x in self.resource.company_sheet_detail[company][date]["Level2"]["code"]:
+                if code[:] in x:
+                    self.cost_category_return_data["Level2"].add(x)
         if len(code) > 4:
-            data_convert = {v: k for k, v in
-                            self.resource.company_sheet_detail[company][date]["Level1"]["code"].items()}
-            self.cost_category_return_data["Level1"].add(code[:4] + "-" + data_convert[code[:4]])
+            for x in self.resource.company_sheet_detail[company][date]["Level1"]["code"]:
+                if code[:4] in x:
+                    self.cost_category_return_data["Level1"].add(x)
         if len(code) == 4:
-            data_convert = {v: k for k, v in
-                            self.resource.company_sheet_detail[company][date]["Level1"]["code"].items()}
-            self.cost_category_return_data["Level1"].add(code + "-" + data_convert[code])
+            for x in self.resource.company_sheet_detail[company][date]["Level1"]["code"]:
+                if code[:] in x:
+                    self.cost_category_return_data["Level1"].add(x)
 
     def get_cost_category(self, company, date, project):
         """
@@ -128,12 +140,9 @@ class Dynamic_Data:
                         if project == [""]:
                             code_keys = list(
                                 self.resource.company_sheet_detail[company_abb][company_abb + time][level_index][
-                                    "code"].keys())
+                                    "code"])
                             for code_key in code_keys:
-                                data_item = \
-                                    self.resource.company_sheet_detail[company_abb][company_abb + time][level_index][
-                                        "code"][code_key] + "-" + code_key
-                                self.cost_category_return_data[level_index].add(data_item)
+                                self.cost_category_return_data[level_index].add(code_key)
                         else:
                             detail_data_list = \
                                 self.resource.company_sheet_detail[company_abb][company_abb + time][level_index]['data']
@@ -163,7 +172,6 @@ class Dynamic_Data:
         project_choose_list = project_choose_list
         cost_choose_list = cost_choose_list
         cost_choose_list.reverse()
-
         depart = set()
 
         # 有效的日期
@@ -191,7 +199,10 @@ class Dynamic_Data:
             if mode == 0:
                 for level in self.level_list:
                     for tem in company_data[level]["data"]:
-                        if tem[2] in project_choose_list:
+                        if project_choose_list != [""]:
+                            if tem[2] in project_choose_list:
+                                depart.add(tem[1])
+                        else:
                             depart.add(tem[1])
             elif mode == 1:
                 for index, item in enumerate(cost_choose_list):
@@ -201,8 +212,12 @@ class Dynamic_Data:
                             item_data.append(x.split('-')[0])
                         level_message = "Level" + str(4 - index)
                         for tem_data in company_data[level_message]["data"]:
-                            if tem_data[2] in project_choose_list and tem_data[0] in item_data:
-                                depart.add(tem_data[1])
+                            if project_choose_list != [""]:
+                                if tem_data[2] in project_choose_list and tem_data[0] in item_data:
+                                    depart.add(tem_data[1])
+                            else:
+                                if tem_data[0] in item_data:
+                                    depart.add(tem_data[1])
                         break
                     else:
                         continue

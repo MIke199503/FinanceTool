@@ -52,8 +52,6 @@ class Picker(ttk.Frame):
         vbar.config(command=self.canvas.yview)
         self.canvas.config(width=600, height=200)
         self.canvas.config(yscrollcommand=vbar.set)
-        # self.canvas.config(scrollregion=self.canvas.bbox('all'))
-        # self._font = tkFont.Font()
         self.dict_checkbutton = {}
         self.dict_checkbutton_var = {}
         self.dict_intvar_item = {}

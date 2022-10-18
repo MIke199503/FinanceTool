@@ -22,7 +22,7 @@ class Query_Module:
         return 1
 
     def query(self):
-        # return_data_module = ["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积","当年同","当年环","当年同"]
-        pass
+        return_data_module = [["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积","当年同","当年环","当年同"]]
+        return return_data_module
 
 

@@ -10,10 +10,15 @@
 import tkinter
 from tkinter.messagebox import showerror
 from tkinter import ttk
+
+import openpyxl
+
 from ComBoPicker import Combopicker
 from DataModule import BasicMessage
 from DataModule.GetDynamicData import Dynamic_Data
 from ViewsSets.CheckList import CheckBox
+from DataModule.QueryClass import Query_Module
+from tkinter.filedialog import asksaveasfilename
 
 
 class QueryView:
@@ -23,6 +28,7 @@ class QueryView:
         :param root_page:父级视图
         """
 
+        self.depart_choose_data = None
         self.choose_page_basic_frame = None
         self.leval_1_picker = None
         self.leval_2_picker = None
@@ -44,6 +50,7 @@ class QueryView:
         self.company_choose_data = []  # 选择的公司信息
         self.project_choose_data = []  # 选择的项目信息
         self.cost_choose_data = []  # 选择的费用类别
+        self.depart_choose_data = []  # 选择的部门信息
 
         self.root = root_page  # 父级视图
 
@@ -119,7 +126,7 @@ class QueryView:
         self.depart_combo = Combopicker(self.choose_frame, values=["全选"])
         self.depart_combo.grid(row=4, column=1, sticky=tkinter.NSEW)
 
-        query_button = ttk.Button(self.choose_frame, text="查询", command=self.export_excel)
+        query_button = ttk.Button(self.choose_frame, text="查询", command=self.start_query)
         query_button.grid(row=5, column=1)
 
     def choose_cost(self):
@@ -420,4 +427,44 @@ class QueryView:
         导出Excel文件
         :return:
         """
-        pass
+        local_data_index = self.table.get_children()
+        if local_data_index != ():
+            all_data = []
+            for index in local_data_index:
+                all_data.append(self.table.item(index)["values"])
+            all_data.insert(0, ['公司', '项目', '费用类别', '部门', '当月金额', '当年累计', '当月同比', '当月环比',
+                                "当年同比"])
+            try:
+                file_save_path = asksaveasfilename(defaultextension='.xlsx', filetypes=[("Excel file", ".xlsx")])
+            except FileNotFoundError:
+                showerror(title="未选择正确的文件", message="你没有选择、创建一个正确的Excel文件名")
+            else:
+                wb = openpyxl.Workbook()
+                ws = wb.active
+                for item in all_data:
+                    ws.append(item)
+                wb.save(file_save_path)
+        else:
+            showerror(title="暂无数据", message="表格中无有效数据，无法导出")
+
+    def start_query(self):
+        """
+        查询按钮的回调函数
+        加载对应的查询数据
+        :return:
+        """
+        self.depart_choose_data = self.depart_combo.get_values().split(',')
+        if "全选" in self.depart_choose_data:
+            self.depart_choose_data.remove("全选")
+        query_class = Query_Module(data=self.data_resource,
+                                   date=self.time_choose_data,
+                                   company=self.company_choose_data,
+                                   project=self.project_choose_data,
+                                   cost_categories=self.cost_choose_data,
+                                   depart=self.depart_choose_data)
+        return_data = query_class.query()
+        obk = self.table.get_children()
+        for item in obk:
+            self.table.delete(item)
+        for new_data in return_data:
+            self.table.insert("", "end", values=new_data, open=True)

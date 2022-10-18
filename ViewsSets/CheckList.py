@@ -82,7 +82,7 @@ class CheckBox(ttk.Frame):
 
     def data_change_callback(self, var, index, mode):
         if self._command is None:
-            print("123")
+            pass
         else:
             self._command()
 

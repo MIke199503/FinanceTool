@@ -70,10 +70,3 @@ def get_full_by_abb(abb):
 #                     }
 # }
 
-
-time_data = ["1", "2", "3"]
-time_choose = None
-
-def get_time_data():
-    return time_data
-

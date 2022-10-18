@@ -97,11 +97,11 @@ class FirstDeal:
         """
         # 预设数据
         page_data = {
-            "Level1": {"code": {}, "data": []},
-            "Level2": {"code": {}, "data": []},
-            "Level3": {"code": {}, "data": []},
-            "Level4": {"code": {}, "data": []},
-            "Level5": {"code": {}, "data": []},
+            "Level1": {"code": [], "data": []},
+            "Level2": {"code": [], "data": []},
+            "Level3": {"code": [], "data": []},
+            "Level4": {"code": [], "data": []},
+            "Level5": {"code": [], "data": []},
         }
         # 有效一级标题
         useful_Level_1 = ["6601", "6602", "6603"]
@@ -120,31 +120,31 @@ class FirstDeal:
                         data_detail = [data_index[0], data_index[1], data_index[2], data_index[7], data_index[9]]
                         # 组织一级标题及数据
                         if len(data_index[0]) == 4 and data_index[2] is None:
-                            page_data["Level1"]["code"][data_index[1]] = data_index[0]
+                            page_data["Level1"]["code"].append(data_index[0] + "-" + data_index[1])
                         elif len(data_index[0]) == 4 and data_index[2] is not None:
                             page_data["Level1"]["data"].append(data_detail)
 
                         # 组织二级
                         elif len(data_index[0]) == 7 and data_index[2] is None:
-                            page_data["Level2"]["code"][data_index[1]] = data_index[0]
+                            page_data["Level2"]["code"].append(data_index[0] + "-" + data_index[1])
                         elif len(data_index[0]) == 7 and data_index[2] is not None:
                             page_data["Level2"]["data"].append(data_detail)
 
                         # 组织三级
                         elif len(data_index[0]) == 10 and data_index[2] is None:
-                            page_data["Level3"]["code"][data_index[1]] = data_index[0]
+                            page_data["Level3"]["code"].append(data_index[0] + "-" + data_index[1])
                         elif len(data_index[0]) == 10 and data_index[2] is not None:
                             page_data["Level3"]["data"].append(data_detail)
 
                         # 组织四级
                         elif len(data_index[0]) == 13 and data_index[2] is None:
-                            page_data["Level4"]["code"][data_index[1]] = data_index[0]
+                            page_data["Level4"]["code"].append(data_index[0] + "-" + data_index[1])
                         elif len(data_index[0]) == 13 and data_index[2] is not None:
                             page_data["Level4"]["data"].append(data_detail)
 
                         # 组织五级
                         elif len(data_index[0]) == 16 and data_index[2] is None:
-                            page_data["Level5"]["code"][data_index[1]] = data_index[0]
+                            page_data["Level5"]["code"].append(data_index[0] + "-" + data_index[1])
                         elif len(data_index[0]) == 16 and data_index[2] is not None:
                             page_data["Level5"]["data"].append(data_detail)
                     else:
