@@ -85,7 +85,7 @@ class Picker(ttk.Frame):
 class Combopicker(ttk.Entry, Picker):
     def __init__(self, master, values=[], target=None, entryvar=None, entrywidth=None, entrystyle=None, onselect=None,
                  activebackground='#b1dcfb', activeforeground='black', selectbackground='#003eff',
-                 selectforeground='red', borderwidth=1, relief="solid"):
+                 selectforeground='red', borderwidth=1, relief="solid", ):
 
         self.values = values
         self.master = master
@@ -107,7 +107,7 @@ class Combopicker(ttk.Entry, Picker):
         if entrystyle is not None:
             entry_config["style"] = entrystyle
 
-        Entry.__init__(self, master, textvariable=self.entry_var, **entry_config, width=30, state="normal")
+        ttk.Entry.__init__(self, master, textvariable=self.entry_var, **entry_config, width=30, state="normal")
 
         self._is_menuoptions_visible = False
 

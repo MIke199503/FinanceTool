@@ -35,6 +35,8 @@ class QueryView:
         self.leval_3_picker = None
         self.leval_4_picker = None
 
+        self.cost_result = tkinter.StringVar()
+
         self.cost_data = None
         self.data_resource = data_resource
 
@@ -63,7 +65,8 @@ class QueryView:
         self.basic_frame.place(relx=0, rely=0)
 
         # 选项视图
-        self.choose_frame = tkinter.Frame(self.basic_frame, background="white")
+        self.choose_frame = ttk.Frame(self.basic_frame,)
+        self.choose_frame["padding"] = (5, 5, 5, 5)
         self.choose_frame.grid_columnconfigure(0, weight=1, )
         self.choose_frame.grid_columnconfigure(1, weight=2, )
         self.choose_frame.grid(row=0, column=0, sticky=tkinter.NSEW)
@@ -91,14 +94,14 @@ class QueryView:
         部门：Label-》ComboBox
         :return:None
         """
-        time_label = tkinter.Label(self.choose_frame, text="请选择日期：（必选）", justify="left", anchor="w", padx=2)
+        time_label = tkinter.Label(self.choose_frame, text="请选择日期：（必选）", justify="left", anchor="w", padx=5)
         time_label.grid(row=0, column=0, sticky=tkinter.NSEW)
 
         self.date_combo = Combopicker(self.choose_frame, values=self.dynamic.time_choose())
-        self.date_combo.grid(row=0, column=1, sticky=tkinter.NSEW)
+        self.date_combo.grid(row=0, column=1, sticky=tkinter.NSEW, pady=7)
         self.date_combo.bind("<FocusOut>", self.get_next_company)
 
-        company_label = tkinter.Label(self.choose_frame, text="请选择公司：（必选）", justify="left", anchor="w", padx=2)
+        company_label = tkinter.Label(self.choose_frame, text="请选择公司：（必选）", justify="left", anchor="w", padx=5)
         company_label.grid(row=1, column=0, sticky=tkinter.NSEW)
 
         _data = list(BasicMessage.company_abbreviation.keys())
@@ -106,28 +109,31 @@ class QueryView:
         self.company_combo = Combopicker(self.choose_frame, values=_data)
         self.company_combo.bind("<FocusIn>", self.get_next_company)
         self.company_combo.bind("<FocusOut>", self.valid_company_and_get_next_project)
-        self.company_combo.grid(row=1, column=1, sticky=tkinter.NSEW)
+        self.company_combo.grid(row=1, column=1, sticky=tkinter.NSEW, pady=7)
 
-        project_label = tkinter.Label(self.choose_frame, text="请选择项目：", justify="left", anchor="w", padx=2)
+        project_label = tkinter.Label(self.choose_frame, text="请选择项目：", justify="left", anchor="w", padx=5)
         project_label.grid(row=2, column=0, sticky=tkinter.NSEW)
 
         self.project_combo = Combopicker(self.choose_frame, values=[""])
-        self.project_combo.grid(row=2, column=1, sticky=tkinter.NSEW)
+        self.project_combo.grid(row=2, column=1, sticky=tkinter.NSEW, pady=7)
 
-        cost_label = tkinter.Label(self.choose_frame, text="请选择费用类别：", justify="left", anchor="w", padx=2)
+        cost_label = tkinter.Label(self.choose_frame, text="请选择费用类别：", justify="left", anchor="w", padx=5)
         cost_label.grid(row=3, column=0, sticky=tkinter.NSEW)
 
-        cost_button = ttk.Button(self.choose_frame, text="点击进入选择页面", command=self.choose_cost)
-        cost_button.grid(row=3, column=1, sticky=tkinter.NSEW)
+        cost_result = ttk.Entry(self.choose_frame, textvariable=self.cost_result, width=30, state="normal")
+        cost_result.grid(row=3, column=1, sticky=tkinter.NSEW, pady=7)
 
-        depart_label = tkinter.Label(self.choose_frame, text="请选择部门：", justify="left", anchor="w", padx=2)
-        depart_label.grid(row=4, column=0, sticky=tkinter.NSEW)
+        cost_button = ttk.Button(self.choose_frame, text="点击进入选择页面", command=self.choose_cost)
+        cost_button.grid(row=4, column=1, sticky=tkinter.NSEW, pady=7)
+
+        depart_label = tkinter.Label(self.choose_frame, text="请选择部门：", justify="left", anchor="w", padx=5)
+        depart_label.grid(row=5, column=0, sticky=tkinter.NSEW)
 
         self.depart_combo = Combopicker(self.choose_frame, values=["全选"])
-        self.depart_combo.grid(row=4, column=1, sticky=tkinter.NSEW)
+        self.depart_combo.grid(row=5, column=1, sticky=tkinter.NSEW, pady=7)
 
         query_button = ttk.Button(self.choose_frame, text="查询", command=self.start_query)
-        query_button.grid(row=5, column=1)
+        query_button.grid(row=6, column=1, pady=7)
 
     def choose_cost(self):
         """
@@ -400,6 +406,7 @@ class QueryView:
         cost_level4_choose = self.leval_4_picker.get_values()
         self.cost_choose_data.clear()
         self.cost_choose_data = [cost_level1_choose, cost_level2_choose, cost_level3_choose, cost_level4_choose]
+        self.cost_result.set(str(self.cost_choose_data))
         data = list(self.dynamic.get_depart_category(date_choose_list=self.time_choose_data,
                                                      company_choose_list=self.company_choose_data,
                                                      project_choose_list=self.project_choose_data,
@@ -421,6 +428,7 @@ class QueryView:
         cost_level4_choose = []
         self.cost_choose_data.clear()
         self.cost_choose_data = [cost_level1_choose, cost_level2_choose, cost_level3_choose, cost_level4_choose]
+        self.cost_result.set(str(self.cost_choose_data))
 
     def export_excel(self):
         """
