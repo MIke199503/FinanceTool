@@ -11,7 +11,7 @@ from tkinter import ttk
 
 
 class CheckBox(ttk.Frame):
-    def __init__(self, master=None, active_background='#b1dcfb', width=200, height=900, values: list = [], active_foreground='black',
+    def __init__(self, master=None, active_background='#b1dcfb', width=200, height=800, values: list = [], active_foreground='black',
                  select_background='#003eff', select_foreground='white', command=None, border_width=2, relief="ridge"):
         #  flat, groove, raised, ridge, solid, or sunken
         super().__init__(master, borderwidth=border_width, relief=relief)
@@ -37,7 +37,7 @@ class CheckBox(ttk.Frame):
 
         F = Frame(self)
         F.pack(fill='x')
-        self.canvas = Canvas(F, scrollregion=(0, 0, 500, (len(self._values) * 21)))
+        self.canvas = Canvas(F, scrollregion=(0, 0, 500, (len(self._values) * 30)))
 
         vbar = Scrollbar(F, orient=VERTICAL)
         vbar.pack(side=RIGHT, fill=Y)

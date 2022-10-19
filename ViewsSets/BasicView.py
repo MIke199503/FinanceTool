@@ -12,7 +12,7 @@ import ChooseFile
 
 
 root = tkinter.Tk()
-root.geometry("1920x1080")
+root.geometry("1920x900")
 root.title('财务')
 dir_path = os.path.dirname(os.path.realpath(__file__))
 root.tk.call('source', os.path.join(dir_path, 'sun-valley.tcl'))

@@ -18,10 +18,10 @@ class ChooseFile:
     def __init__(self, root):
         self.filepath = ""
         self.root = root
-        self.root.geometry("1920x1080")
+        self.root.geometry("1920x900")
 
         # built views by automatic
-        self.page = tkinter.Frame(self.root, width=1920, height=1080, background="white")
+        self.page = tkinter.Frame(self.root, width=1920, height=900, background="white")
         self.page.place(relx=0, rely=0)
         s1 = ttk.Style()
         s1.configure("A.TButton", font=("Arial", 25, "normal"))

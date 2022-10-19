@@ -117,7 +117,7 @@ class FirstDeal:
                     if useful_Level in data_index[0]:
                         # 有效数据
                         # ["科目代码","部门","项目","本期借方发生","本期借方累积"]
-                        data_detail = [data_index[0], data_index[1], data_index[2], data_index[7], data_index[9]]
+                        data_detail = [data_index[0], data_index[1], data_index[2], data_index[8], data_index[10]]
                         # 组织一级标题及数据
                         if len(data_index[0]) == 4 and data_index[2] is None:
                             page_data["Level1"]["code"].append(data_index[0] + "-" + data_index[1])
@@ -202,12 +202,12 @@ class FirstDeal:
                             if num_2 is None or int(num_2[3]) == 0:  # 没有数据，或者数据为0
                                 tong_data = "0"
                             else:
-                                tong_data = str((int(num_1) - int(num_2[3])) / int(num_2[3]))
+                                tong_data = "{:.2f}%".format(((int(num_1) - int(num_2[3])) / int(num_2[3]))*100)
 
                             if num_3 is None or int(num_3[3]) == 0:
                                 circle_data = "0"
                             else:
-                                circle_data = str((int(num_1) - int(num_3[3])) / int(num_3[3]))
+                                circle_data = "{:.2f}%".format(((int(num_1) - int(num_3[3])) / int(num_3[3]))*100)
 
                             # 当年同
                             num_a = singe_item[4]
@@ -220,7 +220,7 @@ class FirstDeal:
                             if num_b is None or int(num_b[4]) == 0:
                                 year_tong_data = "0"
                             else:
-                                year_tong_data = str((int(num_a) - int(num_b[4]) / int(num_b[4])))
+                                year_tong_data = "{:.2f}%".format((int(num_a) - int(num_b[4]) / int(num_b[4]))*100)
 
                             # 组织新数据
                             new_singe_item = singe_item[:]

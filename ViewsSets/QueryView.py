@@ -57,7 +57,7 @@ class QueryView:
         self.root = root_page  # 父级视图
 
         # 加个底
-        self.basic_frame = tkinter.Frame(self.root, width=1920, height=1080, background="white")
+        self.basic_frame = tkinter.Frame(self.root, width=1920, height=900, background="white")
         self.basic_frame.grid_rowconfigure(0, weight=1, minsize=self.basic_frame.winfo_reqheight())
         self.basic_frame.grid_columnconfigure(0, weight=2)
         self.basic_frame.grid_columnconfigure(1, weight=4)
@@ -143,7 +143,7 @@ class QueryView:
         self.get_cost_category_data()
         self.choose_page_basic_frame = tkinter.Frame(self.root,
                                                      width=1920,
-                                                     height=1080,
+                                                     height=800,
                                                      )
         self.choose_page_basic_frame.grid_rowconfigure(0, weight=1,
                                                        minsize=self.choose_page_basic_frame.winfo_reqheight() / 20)
@@ -213,20 +213,19 @@ class QueryView:
         """
         tableColumns = ['公司', '项目', '费用类别', '部门', '当月金额', '当年累计', '当月同比', '当月环比', "当年同比"]
         # 设置滚动条
-        x_scroll = tkinter.Scrollbar(self.tree_frame, orient=tkinter.HORIZONTAL)
         y_scroll = tkinter.Scrollbar(self.tree_frame, orient=tkinter.VERTICAL)
-        x_scroll.pack(side=tkinter.BOTTOM, fill=tkinter.X)
-        y_scroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+        s = ttk.Style()
+        s.configure("Treeview", rowheight=40)
         self.table = ttk.Treeview(
             master=self.tree_frame,  # 父容器
             columns=tableColumns,  # 列标识符列表
-            height=50,  # 表格显示的行数
+            height=20,  # 表格显示的行数
             show='headings',  # 隐藏首列
             style='Treeview',  # 样式
-            xscrollcommand=x_scroll.set,  # x轴滚动条
-            yscrollcommand=y_scroll.set  # y轴滚动条
+            yscrollcommand=y_scroll.set,  # y轴滚动条
+
         )
-        x_scroll.config(command=self.table.xview)
+        y_scroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)
         y_scroll.config(command=self.table.yview)
         self.table.pack()  # TreeView加入frame
         # ['公司', '项目', '费用类别', '部门', '当月金额', '当年累积', '当月同比', '当月环比', '当年同比']
