@@ -8,6 +8,7 @@
 """
 
 import openpyxl
+
 from DataModule import BasicMessage
 from openpyxl.utils import get_column_letter
 
