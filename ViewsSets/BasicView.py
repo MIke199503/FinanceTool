@@ -9,6 +9,10 @@
 import tkinter
 import ChooseFile
 from tkinter import ttk
+import sys
+
+
+sys.path.append("..")
 
 root = tkinter.Tk()
 root.geometry("1920x900")
