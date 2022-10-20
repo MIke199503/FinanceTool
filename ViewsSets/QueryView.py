@@ -10,10 +10,8 @@
 import tkinter
 from tkinter.messagebox import showerror
 from tkinter import ttk
-
 import openpyxl
-
-from ComBoPicker import Combopicker
+from ViewsSets.ComBoPicker import Combopicker
 from DataModule import BasicMessage
 from DataModule.GetDynamicData import Dynamic_Data
 from ViewsSets.CheckList import CheckBox

@@ -6,8 +6,6 @@
 @Author  ：朱桃禾 MikePy
 @Date    ：2022/10/8 10:52 AM 
 """
-import DataModule
-import ViewsSets
 from DataModule.ReadExcel import FirstDeal
 import random
 
