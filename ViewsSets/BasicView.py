@@ -7,16 +7,15 @@
 @Date    ：2022/10/9 9:19 AM 
 """
 import tkinter
-import os
 import ChooseFile
-
+from tkinter import ttk
 
 root = tkinter.Tk()
 root.geometry("1920x900")
 root.title('财务')
-dir_path = os.path.dirname(os.path.realpath(__file__))
-root.tk.call('source', os.path.join(dir_path, 'sun-valley.tcl'))
-root.tk.call("set_theme", "light")
-root.configure(bg='white')
-ChooseFile.ChooseFile(root=root)
+root.tk.call('source', 'forest-light.tcl')
+ttk.Style().theme_use("forest-light")
+s = ttk.Style()
+s.configure("TLabel", padx=5)
+a = ChooseFile.ChooseFile(root=root)
 root.mainloop()

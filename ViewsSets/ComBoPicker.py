@@ -31,7 +31,7 @@ class Picker(ttk.Frame):
         self._command = command
         self.index = 0
 
-        Frame.__init__(self, master, borderwidth=borderwidth,  height=20, relief=relief)  # width=400,
+        ttk.Frame.__init__(self, master, borderwidth=borderwidth, height=20, relief=relief)  # width=400,
 
         self.bind("<FocusIn>", lambda event: self.event_generate('<<PickerFocusIn>>'))
         self.bind("<FocusOut>", lambda event: self.event_generate('<<PickerFocusOut>>'))
@@ -43,7 +43,7 @@ class Picker(ttk.Frame):
         vbar.pack(side=RIGHT, fill=Y)
         vbar.config(command=self.canvas.yview)
 
-        frame = Frame(self.canvas)
+        frame = ttk.Frame(self.canvas)
 
         # self.canvas.pack(side='left',fill='x',expand=True)
         self.canvas.create_window((0, 0,), window=frame, anchor='nw', tags='frame')
@@ -57,11 +57,11 @@ class Picker(ttk.Frame):
         self.dict_intvar_item = {}
         for index, item in enumerate(self._values):
             self.dict_intvar_item[item] = IntVar()
-            self.dict_checkbutton[item] = Checkbutton(frame,
-                                                      text=item,
-                                                      variable=self.dict_intvar_item[item],
-                                                      command=lambda ITEM=item: self._command(ITEM),
-                                                      anchor="w")
+            self.dict_checkbutton[item] = ttk.Checkbutton(frame,
+                                                          text=item,
+                                                          variable=self.dict_intvar_item[item],
+                                                          command=lambda ITEM=item: self._command(ITEM),
+                                                          )
             self.dict_checkbutton[item].grid(row=index, column=0, sticky=NSEW, padx=5)
             self.dict_intvar_item[item].set(0)
             if item in self._entry_wid.get().split(','):
@@ -72,7 +72,6 @@ class Picker(ttk.Frame):
         for i in self.dict_checkbutton:
             self.dict_checkbutton[i].bind("<MouseWheel>", self.processWheel)
         self.bind("<MouseWheel>", self.processWheel)
-
 
     def processWheel(self, event):
         a = int(-event.delta)

@@ -19,12 +19,13 @@ class ChooseFile:
         self.filepath = ""
         self.root = root
         self.root.geometry("1920x900")
+        self.themes = tkinter.StringVar()
 
         # built views by automatic
-        self.page = tkinter.Frame(self.root, width=1920, height=900, background="white")
+        self.page = ttk.Frame(self.root, width=1920, height=900)
         self.page.place(relx=0, rely=0)
         s1 = ttk.Style()
-        s1.configure("A.TButton", font=("Arial", 25, "normal"))
+        s1.configure("A.TButton", font=("TkDefaultFont", 25, "normal"))
         button = ttk.Button(self.page,
                             text='点击你的数据源Excel',
                             width=25,

@@ -20,7 +20,11 @@ class Query_Module:
         self.mode = self.mode_deal()
 
     def mode_deal(self):
-        return 1
+        mode = 0
+        if self.project == [] and self.cost == [[], [], []] and self.depart == []:
+            mode = 1
+
+        return mode
 
     def query(self):
         return_data_module = [["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积", "当年同", "当年环", "当年同"]]
