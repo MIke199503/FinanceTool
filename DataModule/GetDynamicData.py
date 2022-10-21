@@ -63,6 +63,7 @@ class Dynamic_Data:
                                 else:
                                     project_items.add(item[2])
             project_items = list(project_items)
+            project_items.sort()
             project_items.insert(0, "全选")
             return project_items
         return []

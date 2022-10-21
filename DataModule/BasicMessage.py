@@ -27,7 +27,16 @@ company_abbreviation = {"成都环宇知了科技有限公司": "环宇",
                         }
 
 template_data = {v: k for k, v in company_abbreviation.items()}
-
+# item_data = [com,
+#              "",
+#              index,
+#              "",
+#              0,
+#              "",
+#              "",
+#              "",
+#              "",
+#              ]
 
 def get_full_by_abb(abb):
     return template_data[abb]

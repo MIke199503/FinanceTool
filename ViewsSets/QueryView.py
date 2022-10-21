@@ -114,6 +114,7 @@ class QueryView:
         project_label.grid(row=2, column=0, sticky=tkinter.NSEW)
 
         self.project_combo = Combopicker(self.choose_frame, values=[""])
+        self.project_combo.bind("<FocusIn>", self.valid_company_and_get_next_project)
         self.project_combo.grid(row=2, column=1, sticky=tkinter.NSEW, pady=7)
 
         cost_label = ttk.Label(self.choose_frame, text="请选择费用类别：", justify="left", anchor="w")
@@ -210,7 +211,7 @@ class QueryView:
         构建表格，没有数据
         :return:
         """
-        tableColumns = ['日期', '公司', '项目', '费用类别', '部门', '当月金额', '当年累计', '当月同比', '当月环比',
+        tableColumns = ['公司', '项目', '费用类别', '部门', '当月金额', '当年累计', '当月同比', '当月环比',
                         "当年同比"]
         # 设置滚动条
         y_scroll = ttk.Scrollbar(self.tree_frame, orient=tkinter.VERTICAL)
@@ -233,35 +234,32 @@ class QueryView:
         y_scroll.grid(row=0, column=1, sticky=tkinter.NSEW)
         y_scroll.config(command=self.table.yview)
         self.table.grid(row=0, column=0)  # TreeView加入frame
-        # ['日期', '公司', '项目', '费用类别', '部门', '当月金额', '当年累积', '当月同比', '当月环比', '当年同比']
-        self.table.heading(column=0, text="日期", anchor=tkinter.CENTER)
-        self.table.column("日期", width=100, anchor=tkinter.CENTER)
-
-        self.table.heading(column=1, text="公司", anchor=tkinter.CENTER)
+        # ['公司', '项目', '费用类别', '部门', '当月金额', '当年累积', '当月同比', '当月环比', '当年同比']
+        self.table.heading(column=0, text="公司", anchor=tkinter.CENTER)
         self.table.column("公司", width=150, anchor=tkinter.CENTER)
 
-        self.table.heading(column=2, text="项目", anchor=tkinter.CENTER)
+        self.table.heading(column=1, text="项目", anchor=tkinter.CENTER)
         self.table.column("项目", width=150, anchor=tkinter.CENTER)
 
-        self.table.heading(column=3, text="费用类别", anchor=tkinter.CENTER)
+        self.table.heading(column=2, text="费用类别", anchor=tkinter.CENTER)
         self.table.column("费用类别", width=150, anchor=tkinter.CENTER)
 
-        self.table.heading(column=4, text="部门", anchor=tkinter.CENTER)
+        self.table.heading(column=3, text="部门", anchor=tkinter.CENTER)
         self.table.column("部门", width=150, anchor=tkinter.CENTER)
 
-        self.table.heading(column=5, text="当月金额", anchor=tkinter.CENTER)
+        self.table.heading(column=4, text="当月金额", anchor=tkinter.CENTER)
         self.table.column("当月金额", width=100, anchor=tkinter.CENTER)
 
-        self.table.heading(column=6, text="当年累计", anchor=tkinter.CENTER)
+        self.table.heading(column=5, text="当年累计", anchor=tkinter.CENTER)
         self.table.column("当年累计", width=100, anchor=tkinter.CENTER)
 
-        self.table.heading(column=7, text="当月同比", anchor=tkinter.CENTER)
+        self.table.heading(column=6, text="当月同比", anchor=tkinter.CENTER)
         self.table.column("当月同比", width=100, anchor=tkinter.CENTER)
 
-        self.table.heading(column=8, text="当月环比", anchor=tkinter.CENTER)
+        self.table.heading(column=7, text="当月环比", anchor=tkinter.CENTER)
         self.table.column("当月环比", width=100, anchor=tkinter.CENTER)
 
-        self.table.heading(column=9, text="当年同比", anchor=tkinter.CENTER)
+        self.table.heading(column=8, text="当年同比", anchor=tkinter.CENTER)
         self.table.column("当年同比", width=100, anchor=tkinter.CENTER)
 
     def create_export_view(self):
@@ -291,6 +289,10 @@ class QueryView:
                     if company_date[-4:] in self.time_choose_data:
                         self.company_choose_data.append(BasicMessage.get_full_by_abb(company))
             self.company_choose_data = list(set(self.company_choose_data))
+            if "成都环宇知了科技有限公司" in self.company_choose_data:
+                self.company_choose_data.remove("成都环宇知了科技有限公司")
+            self.company_choose_data.sort(reverse=True)
+            self.company_choose_data.insert(0, "成都环宇知了科技有限公司")
             self.company_choose_data.insert(0, "全选")
             self.company_combo.config_self(values=self.company_choose_data)
 
@@ -301,23 +303,22 @@ class QueryView:
         :param event: FocusOut
         :return:
         """
-        if event.widget == self.company_combo:
-            self.company_choose_data = self.company_combo.get_values().split(',')
-            self.time_choose_data = self.date_combo.get_values().split(',')
-            if "全选" in self.time_choose_data:
-                self.time_choose_data.remove("全选")
-            if "全选" in self.company_choose_data:
-                self.company_choose_data.remove("全选")
-            if self.time_choose_data == [""] or self.company_choose_data == [""]:
-                showerror(title="选项错误", message="日期及公司不能为空")
-                if self.time_choose_data == [""]:
-                    self.date_combo.focus_set()
-                if self.company_choose_data == [""]:
-                    self.company_combo.focus_set()
-            else:
-                data = self.dynamic.get_project_items(company=self.company_choose_data, date=self.time_choose_data)
-                self.project_combo.config_self(values=data)
-                self.project_combo.hide_picker()
+        self.company_choose_data = self.company_combo.get_values().split(',')
+        self.time_choose_data = self.date_combo.get_values().split(',')
+        if "全选" in self.time_choose_data:
+            self.time_choose_data.remove("全选")
+        if "全选" in self.company_choose_data:
+            self.company_choose_data.remove("全选")
+        if self.time_choose_data == [""] and self.company_choose_data == [""]:
+            showerror(title="选项错误", message="日期及公司不能为空")
+            if self.time_choose_data == [""]:
+                self.date_combo.focus_set()
+            if self.company_choose_data == [""]:
+                self.company_combo.focus_set()
+        else:
+            data = self.dynamic.get_project_items(company=self.company_choose_data, date=self.time_choose_data)
+            self.project_combo.config_self(values=data)
+            self.project_combo.hide_picker()
 
     def get_cost_category_data(self):
         """
@@ -483,11 +484,6 @@ class QueryView:
             self.project_choose_data.remove("全选")
         if "全选" in self.depart_choose_data:
             self.depart_choose_data.remove("全选")
-        print("date:", self.time_choose_data)
-        print("company:", self.company_choose_data)
-        print("project:", self.project_choose_data)
-        print("cost:", self.cost_choose_data)
-        print("depart:", self.depart_choose_data)
         query_class = Query_Module(data=self.data_resource,
                                    date=self.time_choose_data,
                                    company=self.company_choose_data,
@@ -500,3 +496,4 @@ class QueryView:
             self.table.delete(item)
         for new_data in return_data:
             self.table.insert("", "end", values=new_data, open=True)
+        del query_class

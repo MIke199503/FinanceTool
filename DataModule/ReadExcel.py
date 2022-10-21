@@ -208,15 +208,15 @@ class FirstDeal:
                                                          depart=singe_item[1]
                                                          , )
 
-                            if num_2 is None or int(num_2[3]) == 0:  # 没有数据，或者数据为0
+                            if num_2 is None or float(num_2[3]) == 0.0:  # 没有数据，或者数据为0
                                 tong_data = "0"
                             else:
-                                tong_data = "{:.2f}%".format(((int(num_1) - int(num_2[3])) / int(num_2[3]))*100)
+                                tong_data = "{:.2f}%".format(((float(num_1) - float(num_2[3])) / float(num_2[3]))*100)
 
-                            if num_3 is None or int(num_3[3]) == 0:
+                            if num_3 is None or float(num_3[3]) == 0.0:
                                 circle_data = "0"
                             else:
-                                circle_data = "{:.2f}%".format(((int(num_1) - int(num_3[3])) / int(num_3[3]))*100)
+                                circle_data = "{:.2f}%".format(((float(num_1) - float(num_3[3])) / float(num_3[3]))*100)
 
                             # 当年同
                             num_a = singe_item[4]
@@ -226,10 +226,10 @@ class FirstDeal:
                                                          code=singe_item[0],
                                                          depart=singe_item[1],
                                                          )
-                            if num_b is None or int(num_b[4]) == 0:
+                            if num_b is None or float(num_b[4]) == 0.0:
                                 year_tong_data = "0"
                             else:
-                                year_tong_data = "{:.2f}%".format((int(num_a) - int(num_b[4]) / int(num_b[4]))*100)
+                                year_tong_data = "{:.2f}%".format(((float(num_a) - float(num_b[4])) / float(num_b[4]))*100)
 
                             # 组织新数据
                             new_singe_item = singe_item[:]
