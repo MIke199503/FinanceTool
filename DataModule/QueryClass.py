@@ -12,6 +12,12 @@ from DataModule.BasicMessage import company_abbreviation
 from tkinter.messagebox import showerror
 
 
+# ['']
+# ['']
+# ['']
+# [[], [], [], []]
+# ['']
+
 class Query_Module:
     def __init__(self, data: FirstDeal, date, company, project, cost_categories, depart):
         self.data = data
@@ -26,9 +32,13 @@ class Query_Module:
         self.date_mode_choose()
         self.return_data = []
         _data_template = [["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积", "当年同", "当年环", "当年同"]]
-        self.only_time_company()
+        self.level_list = ["Level1", "Level2", "Level3", "Level4", "Level5"]
 
     def date_mode_choose(self):
+        """
+        处理日期模式
+        :return:
+        """
         if len(self.date) == 1:
             self.mode = "单日期"
         else:
@@ -42,7 +52,7 @@ class Query_Module:
         # [["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积", "当年同", "当年环", "当年同"]]
         if self.mode == "单日期":
             for com in self.company:
-                com_time = com+self.date[0]
+                com_time = com + self.date[0]
                 try:
                     sheets_data = self.data.company_sheet_detail[com][com_time]["Level1"]["total"].keys()
                 except:
@@ -55,7 +65,8 @@ class Query_Module:
                                      "",
                                      self.data.company_sheet_detail[com][com_time]["Level1"]["total"][teme][0],
                                      self.data.company_sheet_detail[com][com_time]["Level1"]["total"][teme][1],
-                                     self.get_total_circle(date=self.date[0], company=com,level="Level1", keys=teme)[0],
+                                     self.get_total_circle(date=self.date[0], company=com, level="Level1", keys=teme)[
+                                         0],
                                      self.get_total_circle(date=self.date[0], company=com, level="Level1", keys=teme)[
                                          1],
                                      self.get_total_circle(date=self.date[0], company=com, level="Level1", keys=teme)[
@@ -69,15 +80,57 @@ class Query_Module:
                     if com_time in self.data.company_sheet_detail[com].keys():
                         if self.data.company_sheet_detail[com][com_time]["Level1"]["total"] != {}:
                             for index in self.data.company_sheet_detail[com][com_time]["Level1"]["total"].keys():
-                                self.add_value(com, index, self.data.company_sheet_detail[com][com_time]["Level1"]["total"][index][0])
+                                self.add_value_basic_mode(com, index,
+                                                          self.data.company_sheet_detail[com][com_time]["Level1"][
+                                                              "total"][index][
+                                                              0])
                     else:
                         continue
             print(self.return_data)
 
     def time_company_project(self):
-            pass
+        if self.mode == "单日期":
+            page_data_basic = []
+            for com in self.company:
+                data = self.deal_single_page_tcp(com=com, time=self.date[0])
+                # deal_tata = se;f.
+            # tongbi = company + str(int(date) - 100)
+            #
+            # # 计算时间边缘
+            # if date[-2:] == "01":
+            #     circle_bi = company + str(int(date[0:2]) - 1) + str(12)
+            # else:
+            #     circle_bi = company + str(int(date) - 1)
 
-    def add_value(self, company, cost_index, data):
+        else:
+            pass
+    def deal_single_page_tcp(self,com,time):
+        page_return_data = []
+        com_time = com + time
+        if com_time in self.data.company_sheet_detail[com].keys():
+            for level in self.level_list:
+                for tem_data in self.data.company_sheet_detail[com][com_time][level]["data"]:
+                    if tem_data[2] in self.project:
+                        # ["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积", "当年同", "当年环", "当年同"]
+                        # ["公司", "项目", "", "", "当月金额", " 当年累积", "当年同", "当年环", "当年同"]
+                        if page_return_data == []:
+                            page_return_data.append([com, tem_data[2], "", "", float(tem_data[3]), "", 0, 0, ""])
+                        else:
+                            flag = 0
+                            for item in page_return_data:
+                                if item[0] == com and item[1] == tem_data[2]:
+                                    index = page_return_data.index(item)
+                                    page_return_data[index][4] += float(tem_data[3])
+                                    flag = 1
+                            if flag == 0:
+                                page_return_data.append(
+                                    [com, tem_data[2], "", "", float(tem_data[3]), "", 0, 0, ""])
+
+
+
+        return page_return_data
+
+    def add_value_basic_mode(self, company, cost_index, data):
         """
         多日期的添加模式
         :param company:
@@ -85,9 +138,8 @@ class Query_Module:
         :param data: 需要添加的数据
         :return:
         """
-        print("当前数据:",self.return_data)
         if self.return_data == []:
-            self.return_data.append([company, "", cost_index, "", float(data), "", "", "", "",])
+            self.return_data.append([company, "", cost_index, "", float(data), "", "", "", "", ])
         else:
             flag = 0
             for item in self.return_data:
@@ -97,11 +149,6 @@ class Query_Module:
                     flag = 1
             if flag == 0:
                 self.return_data.append([company, "", cost_index, "", float(data), "", "", "", "", ])
-        print("操作后的数据:", self.return_data)
-
-        print("*"*10)
-
-
 
     def get_total_circle(self, date, company, level, keys):
         """
@@ -128,17 +175,23 @@ class Query_Module:
 
         if tongbi in self.data.company_sheet_detail[company].keys():
             # 同比-当月 数据
-            tong_num = self.data.company_sheet_detail[company][tongbi][level]["total"][keys][0]
             # 同比-当年 数据
-            tong_year_num = self.data.company_sheet_detail[company][tongbi][level]["total"][keys][1]
-
+            if keys in self.data.company_sheet_detail[company][tongbi][level]["total"].keys():
+                tong_num = self.data.company_sheet_detail[company][tongbi][level]["total"][keys][0]
+                tong_year_num = self.data.company_sheet_detail[company][tongbi][level]["total"][keys][1]
+            else:
+                tong_num = None
+                tong_year_num = None
         else:
             tong_num = None
             tong_year_num = None
 
         if circle_bi in self.data.company_sheet_detail[company].keys():
             # 环比-当月 数据
-            circle_num = self.data.company_sheet_detail[company][circle_bi][level]["total"][keys][0]
+            if keys in self.data.company_sheet_detail[company][circle_bi][level]["total"].keys():
+                circle_num = self.data.company_sheet_detail[company][circle_bi][level]["total"][keys][0]
+            else:
+                circle_num = None
         else:
             circle_num = None
 
@@ -158,17 +211,15 @@ class Query_Module:
         if tong_year_num is None or float(tong_year_num) == 0.0:
             tong_year_total = "0"
         else:
-            tong_year_total = "{:.2f}%".format(((float(basic_year) - float(tong_year_num)) / float(tong_year_num)) * 100)
-        # print("keys:", keys)
-        # print("当月金额:", basic_yue)
-        # print("当年累计:", basic_year)
-        # print("当月同比数据:", tong_num)
-        # print("当年同比数据:", tong_year_num)
-        # print("当月环比数据:", circle_num)
-        # print(year_tong_data, circle_data, tong_year_total)
+            tong_year_total = "{:.2f}%".format(
+                ((float(basic_year) - float(tong_year_num)) / float(tong_year_num)) * 100)
         return year_tong_data, circle_data, tong_year_total
 
     def query(self):
+        if self.project == [''] and self.cost == [[], [], [], []] and self.depart == ['']:
+            self.return_data.clear()
+            self.only_time_company()
+        elif self.project != [''] and self.cost == [[], [], [], []] and self.depart == ['']:
+            self.return_data.clear()
+            self.time_company_project()
         return self.return_data
-
-

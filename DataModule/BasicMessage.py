@@ -37,7 +37,21 @@ template_data = {v: k for k, v in company_abbreviation.items()}
 #              "",
 #              "",
 #              ]
-
+# item_data = [com,
+#              "",
+#              teme,
+#              "",
+#              self.data.company_sheet_detail[com][com_time]["Level1"]["total"][teme][0],
+#              self.data.company_sheet_detail[com][com_time]["Level1"]["total"][teme][1],
+#              self.get_total_circle(date=self.date[0], company=com, level="Level1",
+#                                    keys=teme)[0],
+#              self.get_total_circle(date=self.date[0], company=com, level="Level1",
+#                                    keys=teme)[
+#                  1],
+#              self.get_total_circle(date=self.date[0], company=com, level="Level1",
+#                                    keys=teme)[
+#                  2],
+#              ]
 def get_full_by_abb(abb):
     return template_data[abb]
 
