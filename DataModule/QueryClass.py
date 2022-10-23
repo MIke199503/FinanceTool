@@ -86,25 +86,54 @@ class Query_Module:
                                                               0])
                     else:
                         continue
-            print(self.return_data)
 
     def time_company_project(self):
         if self.mode == "单日期":
-            page_data_basic = []
             for com in self.company:
                 data = self.deal_single_page_tcp(com=com, time=self.date[0])
-                # deal_tata = se;f.
-            # tongbi = company + str(int(date) - 100)
-            #
-            # # 计算时间边缘
-            # if date[-2:] == "01":
-            #     circle_bi = company + str(int(date[0:2]) - 1) + str(12)
-            # else:
-            #     circle_bi = company + str(int(date) - 1)
+                tong_bi = self.get_compare_time(com=com, time=self.date[0])[0]
+                circle_bi = self.get_compare_time(com=com, time=self.date[0])[1]
+                tong_compare_data = self.deal_single_page_tcp(com=com, time=tong_bi[-4:])
+                circle_compare_data = self.deal_single_page_tcp(com=com, time=circle_bi[-4:])
+                print(tong_compare_data,circle_compare_data)
+                for x in range(len(data)):
+                    basic_num = data[x][4]
+                    tong_bi_num = 0
+                    circle_bi_num = 0
+                    for item in tong_compare_data:
+                        if data[x][0] == item[0] and data[x][1] == item[1]:
+                            tong_bi_num = item[4]
+                    for index in circle_compare_data:
+                        if data[x][0] == index[0] and data[x][1] == index[1]:
+                            circle_bi_num = index[4]
 
+                    if tong_bi_num is None or float(tong_bi_num) == 0.0:
+                        tong_data = "0"
+                    else:
+                        tong_data = "{:.2f}%".format(
+                            ((float(basic_num) - float(tong_bi_num)) / float(tong_bi_num)) * 100)
+
+                    if circle_bi_num is None or float(circle_bi_num) == 0.0:
+                        circle_data = "0"
+                    else:
+                        circle_data = "{:.2f}%".format(
+                            ((float(basic_num) - float(circle_bi_num)) / float(circle_bi_num)) * 100)
+                    data[x][6] = tong_data
+                    data[x][7] = circle_data
+                    self.return_data.append(data[x])
         else:
             pass
-    def deal_single_page_tcp(self,com,time):
+
+    def get_compare_time(self, com, time):
+        tong_bi = com + str(int(time) - 100)
+        # 计算时间边缘
+        if time[-2:] == "01":
+            circle_bi = com + str(int(time[0:2]) - 1) + str(12)
+        else:
+            circle_bi = com + str(int(time) - 1)
+        return tong_bi, circle_bi
+
+    def deal_single_page_tcp(self, com, time):
         page_return_data = []
         com_time = com + time
         if com_time in self.data.company_sheet_detail[com].keys():
@@ -125,9 +154,6 @@ class Query_Module:
                             if flag == 0:
                                 page_return_data.append(
                                     [com, tem_data[2], "", "", float(tem_data[3]), "", 0, 0, ""])
-
-
-
         return page_return_data
 
     def add_value_basic_mode(self, company, cost_index, data):
@@ -160,14 +186,8 @@ class Query_Module:
         :return: 同，环 ，年同
         """
         # 同比直接计算
-        tongbi = company + str(int(date) - 100)
-
-        # 计算时间边缘
-        if date[-2:] == "01":
-            circle_bi = company + str(int(date[0:2]) - 1) + str(12)
-        else:
-            circle_bi = company + str(int(date) - 1)
-
+        tongbi = self.get_compare_time(com=company, time=date)[0]
+        circle_bi = self.get_compare_time(com=company, time=date)[1]
         # 当月金额
         basic_yue = self.data.company_sheet_detail[company][company + date][level]["total"][keys][0]
         # 当年累计
