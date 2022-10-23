@@ -7,7 +7,6 @@
 @Date    ：2022/10/8 10:52 AM 
 """
 from DataModule.ReadExcel import FirstDeal
-import random
 from DataModule.BasicMessage import company_abbreviation
 from tkinter.messagebox import showerror
 
@@ -88,6 +87,10 @@ class Query_Module:
                         continue
 
     def time_company_project(self):
+        """
+        处理搜索逻辑：日期+公司+项目
+        :return:
+        """
         if self.mode == "单日期":
             for com in self.company:
                 data = self.deal_single_page_tcp(com=com, time=self.date[0])
@@ -95,7 +98,6 @@ class Query_Module:
                 circle_bi = self.get_compare_time(com=com, time=self.date[0])[1]
                 tong_compare_data = self.deal_single_page_tcp(com=com, time=tong_bi[-4:])
                 circle_compare_data = self.deal_single_page_tcp(com=com, time=circle_bi[-4:])
-                print(tong_compare_data,circle_compare_data)
                 for x in range(len(data)):
                     basic_num = data[x][4]
                     tong_bi_num = 0
@@ -122,9 +124,33 @@ class Query_Module:
                     data[x][7] = circle_data
                     self.return_data.append(data[x])
         else:
-            pass
+            com_list = []  # [[[]],[[],[]]
+            self.return_data.clear()
+            for com in self.company:
+                for time in self.date:
+                    com_list.append(self.deal_single_page_tcp(com=com, time=time))
+            for item in com_list:
+                for index in item:
+                    index[6] = ""
+                    index[7] = ""
+                    if not self.return_data:
+                        self.return_data.append(index)
+                    else:
+                        flag = 0
+                        for target in range(len(self.return_data)):
+                            if self.return_data[target][0] == index[0] and self.return_data[target][1] == index[1]:
+                                self.return_data[target][4] += index[4]
+                                flag = 1
+                        if flag == 0:
+                            self.return_data.append(index)
 
     def get_compare_time(self, com, time):
+        """
+        获取对应的同环比时间周期，包含公司名字
+        :param com:
+        :param time: "2206"
+        :return: 同比时间，环比时间
+        """
         tong_bi = com + str(int(time) - 100)
         # 计算时间边缘
         if time[-2:] == "01":
@@ -134,6 +160,12 @@ class Query_Module:
         return tong_bi, circle_bi
 
     def deal_single_page_tcp(self, com, time):
+        """
+        用于：日期+时间+项目逻辑时处理单张sheet表的数据
+        :param com:
+        :param time:
+        :return: 【【】，【】】
+        """
         page_return_data = []
         com_time = com + time
         if com_time in self.data.company_sheet_detail[com].keys():
@@ -142,7 +174,7 @@ class Query_Module:
                     if tem_data[2] in self.project:
                         # ["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积", "当年同", "当年环", "当年同"]
                         # ["公司", "项目", "", "", "当月金额", " 当年累积", "当年同", "当年环", "当年同"]
-                        if page_return_data == []:
+                        if not page_return_data:
                             page_return_data.append([com, tem_data[2], "", "", float(tem_data[3]), "", 0, 0, ""])
                         else:
                             flag = 0
