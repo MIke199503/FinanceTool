@@ -25,12 +25,13 @@ class Query_Module:
         for x in company:
             self.company.append(company_abbreviation[x])
         self.project = project
+        cost_categories.reverse()
         self.cost = cost_categories
         self.depart = depart
         self.mode = "单日期"
         self.date_mode_choose()
         self.return_data = []
-        _data_template = [["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积", "当年同", "当年环", "当年同"]]
+        _data_template = [["公司", "项目", "费用类别", "部门", "当月金额", " 当年累积", "当月同", "当月环", "当年同"]]
         self.level_list = ["Level1", "Level2", "Level3", "Level4", "Level5"]
 
     def date_mode_choose(self):
@@ -42,6 +43,90 @@ class Query_Module:
             self.mode = "单日期"
         else:
             self.mode = "多日期"
+
+    def time_company_cost(self):
+        """
+        处理搜索逻辑：日期+公司+费用类别
+        :return:
+        """
+        if self.mode == "单日期":
+            for com in self.company:
+                basic_data = self.deal_single_page_tcc(com=com, time=self.date[0])
+                time_data = self.get_compare_time(com=com, time=self.date[0])
+                tong_bi_time = time_data[0][-4:]
+                circle_bi_time = time_data[1][-4:]
+                tong_bi_data = self.deal_single_page_tcc(com=com, time=tong_bi_time)
+                circle_bi_data = self.deal_single_page_tcc(com=com, time=circle_bi_time)
+                for detail_data in basic_data:
+                    basic_yue = detail_data[4]
+                    basic_year = detail_data[5]
+                    tong_yue = None
+                    tong_year = None
+                    circle_yue = None
+                    # 获取对应的目标月同，年同数据
+                    flag = 0
+                    for tong in tong_bi_data:
+                        if tong[0] == detail_data[0] and tong[2] == detail_data[2]:
+                            tong_yue = tong[4]
+                            tong_year = tong[5]
+                            flag = 1
+                    if flag == 0:
+                        tong_year = None
+                        tong_yue = None
+                    # 获取对应的目标月环
+                    flag1 = 0
+                    for circle in circle_bi_data:
+                        if circle[0] == detail_data[0] and circle[2] == detail_data[2]:
+                            circle_yue = circle[4]
+                            flag1 = 1
+                    if flag1 == 0:
+                        circle_yue = None
+
+                    # 月同
+                    if tong_yue is None or float(tong_yue) == 0.0:
+                        yue_tong_data = "0"
+                    else:
+                        yue_tong_data = "{:.2f}%".format(((float(basic_yue) - float(tong_yue)) / float(tong_yue)) * 100)
+
+                    # 月环
+                    if circle_yue is None or float(circle_yue) == 0.0:
+                        circle_data = "0"
+                    else:
+                        circle_data = "{:.2f}%".format(((float(basic_yue) - float(circle_yue)) / float(circle_yue)) * 100)
+
+                    # 年同
+                    if tong_year is None or float(tong_year) == 0.0:
+                        tong_year_total = "0"
+                    else:
+                        tong_year_total = "{:.2f}%".format(((float(basic_year) - float(tong_year)) / float(tong_year)) * 100)
+
+                    index = basic_data.index(detail_data)
+                    basic_data[index][6] = yue_tong_data
+                    basic_data[index][7] = circle_data
+                    basic_data[index][8] = tong_year_total
+                for item in basic_data:
+                    self.return_data.append(item)
+        else:
+            com_list = []  # [[[]],[[],[]]
+            self.return_data.clear()
+            for com in self.company:
+                for time in self.date:
+                    com_list.append(self.deal_single_page_tcc(com=com, time=time))
+            for item in com_list:
+                for index in item:
+                    index[6] = ""
+                    index[7] = ""
+                    index[5] = ""
+                    if not self.return_data:
+                        self.return_data.append(index)
+                    else:
+                        flag = 0
+                        for target in range(len(self.return_data)):
+                            if self.return_data[target][0] == index[0] and self.return_data[target][2] == index[2]:
+                                self.return_data[target][4] += index[4]
+                                flag = 1
+                        if flag == 0:
+                            self.return_data.append(index)
 
     def only_time_company(self):
         """
@@ -188,6 +273,72 @@ class Query_Module:
                                     [com, tem_data[2], "", "", float(tem_data[3]), "", 0, 0, ""])
         return page_return_data
 
+    def deal_single_page_tcc(self, com, time):
+        """
+        用于：日期+时间+费用类别逻辑时处理单张sheet表的数据
+        :param com:
+        :param time:
+        :return:
+        """
+        page_return = []
+        com_time = com + time
+        print("yuan:", self.cost)
+        cost_useful = self.cost.copy()
+        cost_useful.reverse()
+        print("hou:", self.cost, cost_useful)
+        if com_time in self.data.company_sheet_detail[com].keys():
+            for cost_index in range(len(cost_useful)):
+                index_true = 4 - cost_index
+                if not cost_useful[cost_index]:
+                    continue
+                else:
+                    try:
+                        sheets_data = self.data.company_sheet_detail[com][com_time]["Level" + str(index_true)][
+                            "total"].keys()
+                    except:
+                        showerror(titel="发生错误", message="无法获取对应数据，请重新选择，或联系：朱桃禾")
+                    else:
+                        for tem_data in sheets_data:
+                            if tem_data in cost_useful[cost_index]:
+                                if not page_return:
+                                    page_return.append([com,
+                                                        "",
+                                                        tem_data,
+                                                        "",
+                                                        self.data.company_sheet_detail[com][com_time][
+                                                            "Level" + str(index_true)]["total"][tem_data][0],
+                                                        self.data.company_sheet_detail[com][com_time][
+                                                            "Level" + str(index_true)]["total"][tem_data][1],
+                                                        "",
+                                                        "",
+                                                        ""])
+                                else:
+                                    flag = 0
+                                    for item in page_return:
+                                        if item[0] == com and item[2] == tem_data:
+                                            index = page_return.index(item)
+                                            page_return[index][4] += float(
+                                                self.data.company_sheet_detail[com][com_time][
+                                                    "Level" + str(index_true)]["total"][tem_data][0])
+                                            page_return[index][5] += float(
+                                                self.data.company_sheet_detail[com][com_time][
+                                                    "Level" + str(index_true)]["total"][tem_data][1])
+                                            flag = 1
+                                    if flag == 0:
+                                        page_return.append([com,
+                                                            "",
+                                                            tem_data,
+                                                            "",
+                                                            self.data.company_sheet_detail[com][com_time][
+                                                                "Level" + str(index_true)]["total"][tem_data][0],
+                                                            self.data.company_sheet_detail[com][com_time][
+                                                                "Level" + str(index_true)]["total"][tem_data][1],
+                                                            "",
+                                                            "",
+                                                            ""])
+                    break
+        return page_return
+
     def add_value_basic_mode(self, company, cost_index, data):
         """
         多日期的添加模式
@@ -268,10 +419,11 @@ class Query_Module:
         return year_tong_data, circle_data, tong_year_total
 
     def query(self):
+        self.return_data.clear()
         if self.project == [''] and self.cost == [[], [], [], []] and self.depart == ['']:
-            self.return_data.clear()
             self.only_time_company()
         elif self.project != [''] and self.cost == [[], [], [], []] and self.depart == ['']:
-            self.return_data.clear()
             self.time_company_project()
+        elif self.project == [''] and self.cost != [[], [], [], []] and self.depart == ['']:
+            self.time_company_cost()
         return self.return_data

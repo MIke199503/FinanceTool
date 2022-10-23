@@ -334,7 +334,7 @@ class QueryView:
             self.company_choose_data.remove("全选")
         if "全选" in self.project_choose_data:
             self.project_choose_data.remove("全选")
-        if self.project_choose_data == [""] or self.company_choose_data == [""]:
+        if self.time_choose_data == [""] or self.company_choose_data == [""]:
             showerror(title="选项错误", message="日期及公司不能为空")
         else:
             self.cost_data = self.dynamic.get_cost_category(company=self.company_choose_data,
@@ -487,7 +487,7 @@ class QueryView:
         # print(self.time_choose_data)
         # print(self.company_choose_data)
         # print(self.project_choose_data)
-        # print(self.cost_choose_data)
+        print(self.cost_choose_data)
         # print(self.depart_choose_data)
         query_class = Query_Module(data=self.data_resource,
                                    date=self.time_choose_data,
