@@ -119,6 +119,7 @@ class Query_Module:
                                 flag = 1
                         if flag == 0:
                             self.return_data.append(index)
+
     def time_company_project_cost(self):
         """
         处理搜索逻辑：日期+公司+项目+费用类别
@@ -623,6 +624,12 @@ class Query_Module:
         return page_return
 
     def deal_single_page_tcpd(self, com, time):
+        """
+        用于：日期+时间+项目+部门类别逻辑时处理单张sheet表的数据
+        :param com:
+        :param time:
+        :return:
+        """
         page_return = []
         com_time = com + time
         if com_time in self.data.company_sheet_detail[com].keys():
@@ -679,7 +686,7 @@ class Query_Module:
         :param data: 需要添加的数据
         :return:
         """
-        if self.return_data == []:
+        if not self.return_data:
             self.return_data.append([company, "", cost_index, "", float(data), "", "", "", "", ])
         else:
             flag = 0
