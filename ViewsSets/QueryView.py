@@ -514,7 +514,7 @@ class QueryView:
         # print(self.time_choose_data)
         # print(self.company_choose_data)
         # print(self.project_choose_data)
-        # print(self.cost_choose_data)
+        print(self.cost_choose_data)
         # print(self.depart_choose_data)
         query_class = Query_Module(data=self.data_resource,
                                    date=self.time_choose_data,
