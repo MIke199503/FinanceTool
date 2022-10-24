@@ -225,3 +225,31 @@ class Dynamic_Data:
                         continue
 
         return depart
+
+    def get_all_depart(self, com, time):
+        """
+        当只选了时间和公司的情况下，返回可用的部门信息
+        :param com:
+        :param time:
+        :return:
+        """
+        depart = []
+        company_abb_list = []
+        if com != [""]:
+            for x in com:
+                company_abb_list.append(company_abbreviation[x])
+        if company_abb_list:
+            for company in company_abb_list:
+                for date in time:
+                    com_time = company + date
+                    if com_time in self.resource.company_sheet_detail[company].keys():
+                        for level in self.level_list:
+                            for data in self.resource.company_sheet_detail[company][com_time][level]["data"]:
+                                if data:
+                                    depart.append(data[1])
+
+        depart = list(set(depart))
+        depart.sort()
+        depart.insert(0, "全选")
+        return depart
+

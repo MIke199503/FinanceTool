@@ -130,6 +130,7 @@ class QueryView:
         depart_label.grid(row=5, column=0, sticky=tkinter.NSEW)
 
         self.depart_combo = Combopicker(self.choose_frame, values=["全选"])
+        self.depart_combo.bind("<FocusIn>", self.get_depart)
         self.depart_combo.grid(row=5, column=1, sticky=tkinter.NSEW, pady=7)
 
         query_button = ttk.Button(self.choose_frame, text="查询", command=self.start_query, width=20)
@@ -309,16 +310,42 @@ class QueryView:
             self.time_choose_data.remove("全选")
         if "全选" in self.company_choose_data:
             self.company_choose_data.remove("全选")
+
         if self.time_choose_data == [""] and self.company_choose_data == [""]:
-            showerror(title="选项错误", message="日期及公司不能为空")
+            # showerror(title="选项错误", message="日期及公司不能为空")
             if self.time_choose_data == [""]:
                 self.date_combo.focus_set()
             if self.company_choose_data == [""]:
                 self.company_combo.focus_set()
         else:
             data = self.dynamic.get_project_items(company=self.company_choose_data, date=self.time_choose_data)
+            data2 = self.dynamic.get_all_depart(com=self.company_choose_data, time=self.time_choose_data)
             self.project_combo.config_self(values=data)
+            self.depart_combo.config_self(values=data2)
             self.project_combo.hide_picker()
+            self.depart_combo.hide_picker()
+
+    def get_depart(self, event):
+        self.company_choose_data = self.company_combo.get_values().split(',')
+        self.time_choose_data = self.date_combo.get_values().split(',')
+        if "全选" in self.time_choose_data:
+            self.time_choose_data.remove("全选")
+        if "全选" in self.company_choose_data:
+            self.company_choose_data.remove("全选")
+
+        if self.time_choose_data == [""] and self.company_choose_data == [""]:
+            # showerror(title="选项错误", message="日期及公司不能为空")
+            if self.time_choose_data == [""]:
+                self.date_combo.focus_set()
+            if self.company_choose_data == [""]:
+                self.company_combo.focus_set()
+        else:
+            data2 = self.dynamic.get_all_depart(com=self.company_choose_data, time=self.time_choose_data)
+            self.depart_combo.config_self(values=data2)
+            self.depart_combo.hide_picker()
+            self.depart_combo.show_picker()
+            self.depart_combo.hide_picker()
+            self.depart_combo.show_picker()
 
     def get_cost_category_data(self):
         """
@@ -487,7 +514,7 @@ class QueryView:
         # print(self.time_choose_data)
         # print(self.company_choose_data)
         # print(self.project_choose_data)
-        print(self.cost_choose_data)
+        # print(self.cost_choose_data)
         # print(self.depart_choose_data)
         query_class = Query_Module(data=self.data_resource,
                                    date=self.time_choose_data,

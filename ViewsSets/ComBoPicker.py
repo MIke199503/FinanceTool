@@ -198,6 +198,10 @@ class Combopicker(ttk.Entry, Picker):
     def get_values(self):
         return self.entry_var.get()
 
+    def bind_al_(self, s, func):
+        self.bind(s, func)
+        self.picker_frame.bind(s, func)
+
 
 if __name__ == '__main__':
     root = tkinter.Tk()
