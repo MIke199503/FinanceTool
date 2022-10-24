@@ -326,12 +326,25 @@ class QueryView:
             self.depart_combo.hide_picker()
 
     def get_depart(self, event):
+        """
+        点开部门按钮的时候，再次刷新数据，按键响应函数
+        :param event:
+        :return:
+        """
+        self.company_choose_data.clear()
+        self.time_choose_data.clear()
+        self.project_choose_data.clear()
+
         self.company_choose_data = self.company_combo.get_values().split(',')
         self.time_choose_data = self.date_combo.get_values().split(',')
+        self.project_choose_data = self.project_combo.get_values().split(',')
+
         if "全选" in self.time_choose_data:
             self.time_choose_data.remove("全选")
         if "全选" in self.company_choose_data:
             self.company_choose_data.remove("全选")
+        if "全选" in self.project_choose_data:
+            self.project_choose_data.remove("全选")
 
         if self.time_choose_data == [""] and self.company_choose_data == [""]:
             # showerror(title="选项错误", message="日期及公司不能为空")
@@ -340,12 +353,27 @@ class QueryView:
             if self.company_choose_data == [""]:
                 self.company_combo.focus_set()
         else:
-            data2 = self.dynamic.get_all_depart(com=self.company_choose_data, time=self.time_choose_data)
-            self.depart_combo.config_self(values=data2)
-            self.depart_combo.hide_picker()
-            self.depart_combo.show_picker()
-            self.depart_combo.hide_picker()
-            self.depart_combo.show_picker()
+            if self.project_choose_data == [""]:
+                data2 = self.dynamic.get_all_depart(com=self.company_choose_data, time=self.time_choose_data)
+                self.depart_combo.config_self(values=data2)
+                self.depart_combo.hide_picker()
+                self.depart_combo.show_picker()
+                self.depart_combo.hide_picker()
+                self.depart_combo.show_picker()
+            else:
+                self.cost_choose_data.clear()
+                self.cost_choose_data = [[], [], [], []]
+                data = list(self.dynamic.get_depart_category(date_choose_list=self.time_choose_data,
+                                                             company_choose_list=self.company_choose_data,
+                                                             project_choose_list=self.project_choose_data,
+                                                             cost_choose_list=self.cost_choose_data))
+                data.sort()
+                data.insert(0, "全选")
+                self.depart_combo.config_self(values=data)
+                self.depart_combo.hide_picker()
+                self.depart_combo.show_picker()
+                self.depart_combo.hide_picker()
+                self.depart_combo.show_picker()
 
     def get_cost_category_data(self):
         """
