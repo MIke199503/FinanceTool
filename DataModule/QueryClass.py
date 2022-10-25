@@ -46,6 +46,79 @@ class Query_Module:
         else:
             self.mode = "多日期"
 
+    def time_company_project_cost_depart(self):
+        if self.mode == "单日期":
+            for com in self.company:
+                basic = self.deal_single_page_tcpcd(com=com, time=self.date[0])
+
+    def time_company_cost_depart(self):
+        if self.mode == "单日期":
+            for com in self.company:
+                basic = self.deal_single_page_tccd(com=com, time=self.date[0])
+                tong_bi_time = self.get_compare_time(com=com, time=self.date[0])[0][-4:]
+                circle_bi_time = self.get_compare_time(com=com, time=self.date[0])[1][-4:]
+                tong_bi_data = self.deal_single_page_tccd(com=com, time=tong_bi_time)
+                circle_bi_data = self.deal_single_page_tccd(com=com, time=circle_bi_time)
+                for item_detail in basic:
+                    basic_yue = item_detail[4]
+                    basic_year = item_detail[5]
+                    tong_yue_target = None
+                    tong_year_target = None
+                    circle_target = None
+                    for tong in tong_bi_data:
+                        if tong[0] == item_detail[0] and tong[2] == item_detail[2] and tong[3] == item_detail[3]:
+                            tong_yue_target = tong[4]
+                            tong_year_target = tong[5]
+                    for circle in circle_bi_data:
+                        if circle[0] == item_detail[0] and circle[2] == item_detail[2] and circle[3] == item_detail[3]:
+                            circle_target = circle[4]
+                    # 月同
+
+                    if tong_yue_target is None or float(tong_yue_target) == 0.0:
+                        yue_tong_data = "0"
+                    else:
+                        yue_tong_data = "{:.2f}%".format(
+                            ((float(basic_yue) - float(tong_yue_target)) / float(tong_yue_target)) * 100)
+
+                    # 月环
+                    if circle_target is None or float(circle_target) == 0.0:
+                        circle_data = "0"
+                    else:
+                        circle_data = "{:.2f}%".format(
+                            ((float(basic_yue) - float(circle_target)) / float(circle_target)) * 100)
+
+                    # 年同
+                    if tong_year_target is None or float(tong_year_target) == 0.0:
+                        tong_year_data = "0"
+                    else:
+                        tong_year_data = "{:.2f}%".format(
+                            ((float(basic_year) - float(tong_year_target)) / float(tong_year_target)) * 100)
+                    index = basic.index(item_detail)
+                    basic[index][6] = yue_tong_data
+                    basic[index][7] = circle_data
+                    basic[index][8] = tong_year_data
+                    self.return_data.append(item_detail)
+        else:
+            com_list = []  # [[[]],[[],[]]
+            self.return_data.clear()
+            for com in self.company:
+                for time in self.date:
+                    com_list.append(self.deal_single_page_tccd(com=com, time=time))
+            for item in com_list:
+                for index in item:
+                    index[5] = ""
+                    if not self.return_data:
+                        self.return_data.append(index)
+                    else:
+                        flag = 0
+                        for target in range(len(self.return_data)):
+                            if self.return_data[target][0] == index[0] and self.return_data[target][2] == index[2] and self.return_data[target][3] == index[3]:
+                                self.return_data[target][4] += index[4]
+                                self.return_data[target][5] = ""
+                                flag = 1
+                        if flag == 0:
+                            self.return_data.append(index)
+
     def time_company_project_depart(self):
         """
         处理搜索逻辑：日期+公司+项目+部门
@@ -650,6 +723,85 @@ class Query_Module:
                                 page_return.append([com, item[2], "", item[1], item[3], item[4], "", "", ""])
         return page_return
 
+    def deal_single_page_tccd(self, com, time):
+        """
+        用于：日期+时间+费用类别+部门逻辑时处理单张sheet表的数据
+        :param com:
+        :param time:
+        :return:
+        """
+        page_return = []
+        com_time = com + time
+        cost_useful = self.cost.copy()
+        if com_time in self.data.company_sheet_detail[com].keys():
+            for cost_index in range(len(cost_useful)):
+                index_true = 4 - cost_index
+                level = "Level" + str(index_true)
+                if not cost_useful[cost_index]:
+                    continue
+                else:
+                    for cost_item in cost_useful[cost_index]:
+                        for depart in self.depart:
+                            item_new = self.get_total_cost_depart(com=com, date=time, depart=depart, cost=cost_item)
+                            page_return.append(item_new)
+                    break
+        return page_return
+
+    def deal_single_page_tcpcd(self, com, time):
+        """
+        用于：日期+时间+项目+费用类别+部门逻辑时处理单张sheet表的数据
+        :param com:
+        :param time:
+        :return:
+        """
+        page_return = []
+        com_time = com + time
+        cost_useful = self.cost.copy()
+        useful_cost_index = 3
+        useful_cost_code = []
+        for x in cost_useful:
+            if not x:
+                continue
+            else:
+                useful_cost_index = cost_useful.index(x)
+                for it in cost_useful[x]:
+                    useful_cost_code.append(it.split("-")[0])
+                break
+        if com_time in self.data.company_sheet_detail[com].keys():
+            data_tem = self.data.company_sheet_detail[com][com_time][4-useful_cost_index]['data']
+            for item in data_tem:
+                if item[0] in useful_cost_code and item[2] in 
+
+
+        return page_return
+    def get_total_cost_depart(self, com, date, depart, cost):
+        """
+        获取项目费用类别的纵深总和---组合依据：部门
+        :param depart:
+        :param com:
+        :param date:
+        :param cost:
+        :return:
+        """
+        level_index = None
+        com_time = com + date
+        code = cost.split("-")[0]
+        data_item = [com, "", cost, depart, 0, 0, "", "", ""]
+        for level in self.level_list:
+            if cost in self.data.company_sheet_detail[com][com_time][level]["code"]:
+                level_index = level
+        for item in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
+            if item[0] == code and item[1] == depart:
+                data_item[4] += float(item[3])
+                data_item[5] += float(item[4])
+        while int(level_index[-1:]) <= 4:
+            level_index = level_index[:-1] + str(int(level_index[-1:]) + 1)
+            for it in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
+                if code in it[0] and it[1] == depart:
+                    data_item[4] += float(it[3])
+                    data_item[5] += float(it[4])
+        return data_item
+
     def get_total_cost_project(self, com, date, project, cost):
         """
         获取项目费用类别的纵深总和
@@ -771,4 +923,10 @@ class Query_Module:
             self.time_company_project_cost()
         elif self.project != [''] and self.cost == [[], [], [], []] and self.depart != ['']:
             self.time_company_project_depart()
+        elif self.project == [''] and self.cost != [[], [], [], []] and self.depart != ['']:
+            self.time_company_cost_depart()
+        elif self.project != [''] and self.cost != [[], [], [], []] and self.depart != ['']:
+            self.time_company_project_cost_depart()
+        else:
+            showerror(title="查询错误", message="未知查询逻辑！请联系研发人员！！")
         return self.return_data
