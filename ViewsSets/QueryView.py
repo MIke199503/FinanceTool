@@ -200,10 +200,10 @@ class QueryView:
         button_frame = ttk.Frame(self.choose_page_basic_frame)
         button_frame.grid(row=2, column=3)
 
-        sure_button = ttk.Button(button_frame, text="确认", command=self.click_cost_button, width=20, )
+        sure_button = ttk.Button(button_frame, text="确认", command=self.click_cost_button, width=15, )
         sure_button.grid(row=0, column=1)
 
-        cancel_button = ttk.Button(button_frame, text="返回", command=self.cancel_cost_choose_page, width=20, )
+        cancel_button = ttk.Button(button_frame, text="返回", command=self.cancel_cost_choose_page, width=15, )
         cancel_button.grid(row=0, column=0)
 
         self.choose_page_basic_frame.place(relx=0, rely=0)
