@@ -159,21 +159,22 @@ class Dynamic_Data:
             sort_data[x] = list_convert
         return sort_data
 
-    def get_depart_category(self, date_choose_list, company_choose_list, project_choose_list, cost_choose_list):
+    def get_depart_category(self, date_choose_list, company_choose_list, project_choose_list, cost_choose_list1):
         """
         根据选择信息，获取对应的部门提示信息，
         若全选、空选、仅选一级科目，返回所有，若单选选择对应层级的部门信息
-        :param date_choose_list: list
+        :param date_choose_list:
+        :param cost_choose_list1:
         :param company_choose_list: list
         :param project_choose_list: list
-        :param cost_choose_list: list
         :return: depart部门信息列表
         """
         date_choose_list = date_choose_list
         company_choose_list = company_choose_list
         project_choose_list = project_choose_list
-        cost_choose_list = cost_choose_list
+        cost_choose_list = cost_choose_list1[:]
         cost_choose_list.reverse()
+        print(cost_choose_list)
         depart = set()
 
         # 有效的日期
@@ -213,13 +214,26 @@ class Dynamic_Data:
                         for x in item:
                             item_data.append(x.split('-')[0])
                         level_message = "Level" + str(4 - index)
-                        for tem_data in company_data[level_message]["data"]:
-                            if project_choose_list != [""]:
-                                if tem_data[2] in project_choose_list and tem_data[0] in item_data:
-                                    depart.add(tem_data[1])
-                            else:
-                                if tem_data[0] in item_data:
-                                    depart.add(tem_data[1])
+                        while int(level_message[-1]) <= 5:
+                            for tem_data in company_data[level_message]["data"]:
+                                if project_choose_list != [""]:
+                                    if tem_data[2] in project_choose_list:
+                                        flag = 0
+                                        for a in item_data:
+                                            if a in tem_data[0]:
+                                                flag = 1
+                                                break
+                                        if flag == 1:
+                                            depart.add(tem_data[1])
+                                else:
+                                    flag = 0
+                                    for a in item_data:
+                                        if a in tem_data[0]:
+                                            flag = 1
+                                            break
+                                    if flag == 1:
+                                        depart.add(tem_data[1])
+                            level_message = "Level" + str(int(level_message[-1]) + 1)
                         break
                     else:
                         continue

@@ -17,6 +17,7 @@ from DataModule.GetDynamicData import Dynamic_Data
 from ViewsSets.CheckList import CheckBox
 from DataModule.QueryClass import Query_Module
 from tkinter.filedialog import asksaveasfilename
+import time
 
 
 class QueryView:
@@ -319,9 +320,9 @@ class QueryView:
                 self.company_combo.focus_set()
         else:
             data = self.dynamic.get_project_items(company=self.company_choose_data, date=self.time_choose_data)
-            data2 = self.dynamic.get_all_depart(com=self.company_choose_data, time=self.time_choose_data)
+            # data2 = self.dynamic.get_all_depart(com=self.company_choose_data, time=self.time_choose_data)
             self.project_combo.config_self(values=data)
-            self.depart_combo.config_self(values=data2)
+            # self.depart_combo.config_self(values=data2)
             self.project_combo.hide_picker()
             self.depart_combo.hide_picker()
 
@@ -353,27 +354,18 @@ class QueryView:
             if self.company_choose_data == [""]:
                 self.company_combo.focus_set()
         else:
-            if self.project_choose_data == [""]:
-                data2 = self.dynamic.get_all_depart(com=self.company_choose_data, time=self.time_choose_data)
-                self.depart_combo.config_self(values=data2)
-                self.depart_combo.hide_picker()
-                self.depart_combo.show_picker()
-                self.depart_combo.hide_picker()
-                self.depart_combo.show_picker()
-            else:
-                self.cost_choose_data.clear()
-                self.cost_choose_data = [[], [], [], []]
-                data = list(self.dynamic.get_depart_category(date_choose_list=self.time_choose_data,
-                                                             company_choose_list=self.company_choose_data,
-                                                             project_choose_list=self.project_choose_data,
-                                                             cost_choose_list=self.cost_choose_data))
-                data.sort()
-                data.insert(0, "全选")
-                self.depart_combo.config_self(values=data)
-                self.depart_combo.hide_picker()
-                self.depart_combo.show_picker()
-                self.depart_combo.hide_picker()
-                self.depart_combo.show_picker()
+            data = list(self.dynamic.get_depart_category(date_choose_list=self.time_choose_data,
+                                                         company_choose_list=self.company_choose_data,
+                                                         project_choose_list=self.project_choose_data,
+                                                         cost_choose_list1=self.cost_choose_data))
+            data.sort()
+            data.insert(0, "全选")
+            self.depart_combo.config_self(values=data)
+            self.depart_combo.hide_picker()
+            self.depart_combo.show_picker()
+            time.sleep(0.1)
+            self.depart_combo.hide_picker()
+            self.depart_combo.show_picker()
 
     def get_cost_category_data(self):
         """
@@ -473,13 +465,13 @@ class QueryView:
         self.cost_choose_data.clear()
         self.cost_choose_data = [cost_level1_choose, cost_level2_choose, cost_level3_choose, cost_level4_choose]
         self.cost_result.set(str(self.cost_choose_data))
-        data = list(self.dynamic.get_depart_category(date_choose_list=self.time_choose_data,
-                                                     company_choose_list=self.company_choose_data,
-                                                     project_choose_list=self.project_choose_data,
-                                                     cost_choose_list=self.cost_choose_data))
-        data.sort()
-        data.insert(0, "全选")
-        self.depart_combo.config_self(values=data)
+        # data = list(self.dynamic.get_depart_category(date_choose_list=self.time_choose_data,
+        #                                              company_choose_list=self.company_choose_data,
+        #                                              project_choose_list=self.project_choose_data,
+        #                                              cost_choose_list1=self.cost_choose_data))
+        # data.sort()
+        # data.insert(0, "全选")
+        # self.depart_combo.config_self(values=data)
         self.choose_page_basic_frame.destroy()
 
     def cancel_cost_choose_page(self):
@@ -544,6 +536,8 @@ class QueryView:
         # print(self.project_choose_data)
         # print(self.cost_choose_data)
         # print(self.depart_choose_data)
+        if self.cost_choose_data == "":
+            self.cost_choose_data = [[], [], [], []]
         query_class = Query_Module(data=self.data_resource,
                                    date=self.time_choose_data,
                                    company=self.company_choose_data,
@@ -551,6 +545,12 @@ class QueryView:
                                    cost_categories=self.cost_choose_data,
                                    depart=self.depart_choose_data)
         return_data = query_class.query()
+        for index in range(len(return_data)):
+            if return_data[index][4] != "":
+                return_data[index][4] = "{:.2f}".format(float(return_data[index][4]))
+            if return_data[index][5] != "":
+                return_data[index][5] = "{:.2f}".format(float(return_data[index][4]))
+
         obk = self.table.get_children()
         for item in obk:
             self.table.delete(item)
