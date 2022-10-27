@@ -67,7 +67,8 @@ class Query_Module:
                     # 获取对应的目标月同，年同数据
                     flag = 0
                     for tong in tong_bi_data:
-                        if tong[0] == detail_data[0] and tong[1] == detail_data[1] and tong[2] == detail_data[2] and tong[3] == detail_data[3]:
+                        if tong[0] == detail_data[0] and tong[1] == detail_data[1] and tong[2] == detail_data[2] and \
+                                tong[3] == detail_data[3]:
                             tong_yue = tong[4]
                             tong_year = tong[5]
                             flag = 1
@@ -77,7 +78,8 @@ class Query_Module:
                     # 获取对应的目标月环
                     flag1 = 0
                     for circle in circle_bi_data:
-                        if circle[0] == detail_data[0] and circle[1] == detail_data[1] and circle[2] == detail_data[2] and circle[3] == detail_data[3]:
+                        if circle[0] == detail_data[0] and circle[1] == detail_data[1] and circle[2] == detail_data[
+                            2] and circle[3] == detail_data[3]:
                             circle_yue = circle[4]
                             flag1 = 1
                     if flag1 == 0:
@@ -654,7 +656,6 @@ class Query_Module:
         page_return = []
         com_time = com + time
         cost_useful = self.cost.copy()
-        cost_useful.reverse()
         if com_time in self.data.company_sheet_detail[com].keys():
             for cost_index in range(len(cost_useful)):
                 index_true = 4 - cost_index
@@ -767,18 +768,14 @@ class Query_Module:
         cost_useful = self.cost.copy()
         if com_time in self.data.company_sheet_detail[com].keys():
             for cost_index in range(len(cost_useful)):
-                index_true = 4 - cost_index
-                level = "Level" + str(index_true)
                 if not cost_useful[cost_index]:
                     continue
                 else:
-                    for cost_item in cost_useful[cost_index]:
-                        for project in self.project:
-                            full_com = get_full_by_abb(abb=com)
-                            useful_project = self.dynamic.get_project_items(company=[full_com], date=[time])
-                            if project in useful_project:
-                                item_new = self.get_total_cost_project(com=com, date=time, project=project,
-                                                                       cost=cost_item)
+                    for project in self.project:
+                        for cost_item in cost_useful[cost_index]:
+                            item_new = self.get_total_cost_project(com=com, date=time, project=project,
+                                                                   cost=cost_item)
+                            if item_new is not None:
                                 page_return.append(item_new)
                     break
         return page_return
@@ -830,7 +827,8 @@ class Query_Module:
                     for cost_item in cost_useful[cost_index]:
                         for depart in self.depart:
                             item_new = self.get_total_cost_depart(com=com, date=time, depart=depart, cost=cost_item)
-                            page_return.append(item_new)
+                            if item_new is not None:
+                                page_return.append(item_new)
                     break
         return page_return
 
@@ -845,7 +843,6 @@ class Query_Module:
         com_time = com + time
         cost_useful = self.cost.copy()
         useful_cost_index = 3
-
         for x in cost_useful:
             if not x:
                 continue
@@ -856,9 +853,12 @@ class Query_Module:
             for project in self.project:
                 for cost in cost_useful[useful_cost_index]:
                     for depart in self.depart:
-                        if self.check_project_depart(com=com, date=time, level="Level"+str(4-useful_cost_index), project=project, depart=depart):
-                            item_new = self.get_total_cost_project_depart(com=com, date=time, depart=depart, cost=cost, project=project)
-                            page_return.append(item_new)
+                        if self.check_project_depart(com=com, date=time, level="Level" + str(4 - useful_cost_index),
+                                                     project=project, depart=depart):
+                            item_new = self.get_total_cost_project_depart(com=com, date=time, depart=depart, cost=cost,
+                                                                          project=project)
+                            if item_new is not None:
+                                page_return.append(item_new)
                         else:
                             continue
         return page_return
@@ -876,7 +876,7 @@ class Query_Module:
         flag = 0
         level1 = level
         while int(level1[-1:]) <= 5:
-            for item in self.data.company_sheet_detail[com][com+date][level1]["data"]:
+            for item in self.data.company_sheet_detail[com][com + date][level1]["data"]:
                 if item[1] == depart and item[2] == project:
                     flag = 1
                     break
@@ -901,20 +901,33 @@ class Query_Module:
         com_time = com + date
         code = cost.split("-")[0]
         data_item = [com, project, cost, depart, 0, 0, "", "", ""]
-        for level in self.level_list:
-            if cost in self.data.company_sheet_detail[com][com_time][level]["code"]:
-                level_index = level
-        for item in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
-            if item[0] == code and item[2] == project and item[1] == depart:
-                data_item[4] += float(item[3])
-                data_item[5] += float(item[4])
-        while int(level_index[-1:]) <= 4:
-            level_index = level_index[:-1] + str(int(level_index[-1:]) + 1)
-            for it in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
-                if code in it[0] and it[2] == project and it[1] == depart:
-                    data_item[4] += float(it[3])
-                    data_item[5] += float(it[4])
-        return data_item
+        if len(code) == 4:
+            level_index = "Level1"
+        elif len(code) == 7:
+            level_index = "Level2"
+        elif len(code) == 10:
+            level_index = "Level3"
+        elif len(code) == 13:
+            level_index = "Level4"
+        elif len(code) == 16:
+            level_index = "Level5"
+        if level_index is not None:
+            for item in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
+                if item[0] == code and item[2] == project and item[1] == depart:
+                    data_item[4] += float(item[3])
+                    data_item[5] += float(item[4])
+            while int(level_index[-1:]) <= 4:
+                level_index = level_index[:-1] + str(int(level_index[-1:]) + 1)
+                for it in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
+                    if code in it[0] and it[2] == project and it[1] == depart:
+                        data_item[4] += float(it[3])
+                        data_item[5] += float(it[4])
+            if data_item == [com, project, cost, depart, 0, 0, "", "", ""]:
+                return None
+            else:
+                return data_item
+        else:
+            return None
 
     def get_total_cost_depart(self, com, date, depart, cost):
         """
@@ -929,20 +942,34 @@ class Query_Module:
         com_time = com + date
         code = cost.split("-")[0]
         data_item = [com, "", cost, depart, 0, 0, "", "", ""]
-        for level in self.level_list:
-            if cost in self.data.company_sheet_detail[com][com_time][level]["code"]:
-                level_index = level
-        for item in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
-            if item[0] == code and item[1] == depart:
-                data_item[4] += float(item[3])
-                data_item[5] += float(item[4])
-        while int(level_index[-1:]) <= 4:
-            level_index = level_index[:-1] + str(int(level_index[-1:]) + 1)
-            for it in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
-                if code in it[0] and it[1] == depart:
-                    data_item[4] += float(it[3])
-                    data_item[5] += float(it[4])
-        return data_item
+        if len(code) == 4:
+            level_index = "Level1"
+        elif len(code) == 7:
+            level_index = "Level2"
+        elif len(code) == 10:
+            level_index = "Level3"
+        elif len(code) == 13:
+            level_index = "Level4"
+        elif len(code) == 16:
+            level_index = "Level5"
+
+        if level_index is not None:
+            for item in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
+                if item[0] == code and item[1] == depart:
+                    data_item[4] += float(item[3])
+                    data_item[5] += float(item[4])
+            while int(level_index[-1:]) <= 4:
+                level_index = level_index[:-1] + str(int(level_index[-1:]) + 1)
+                for it in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
+                    if code in it[0] and it[1] == depart:
+                        data_item[4] += float(it[3])
+                        data_item[5] += float(it[4])
+            if data_item == [com, "", cost, depart, 0, 0, "", "", ""]:
+                return None
+            else:
+                return data_item
+        else:
+            return None
 
     def get_total_cost_project(self, com, date, project, cost):
         """
@@ -957,20 +984,31 @@ class Query_Module:
         com_time = com + date
         code = cost.split("-")[0]
         data_item = [com, project, cost, "", 0, 0, "", "", ""]
-        for level in self.level_list:
-            if cost in self.data.company_sheet_detail[com][com_time][level]["code"]:
-                level_index = level
-        for item in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
-            if item[0] == code and item[2] == project:
-                data_item[4] += float(item[3])
-                data_item[5] += float(item[4])
-        while int(level_index[-1:]) <= 4:
-            level_index = level_index[:-1] + str(int(level_index[-1:]) + 1)
-            for it in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
-                if code in it[0] and it[2] == project:
-                    data_item[4] += float(it[3])
-                    data_item[5] += float(it[4])
-        return data_item
+
+        if len(code) == 4:
+            level_index = "Level1"
+        elif len(code) == 7:
+            level_index = "Level2"
+        elif len(code) == 10:
+            level_index = "Level3"
+        elif len(code) == 13:
+            level_index = "Level4"
+        elif len(code) == 16:
+            level_index = "Level5"
+
+        if level_index is None:
+            return None
+        else:
+            while int(level_index[-1:]) <= 5:
+                for it in self.data.company_sheet_detail[com][com_time][level_index]["data"]:
+                    if (code in it[0] or code == it[0]) and it[2] == project:
+                        data_item[4] += float(it[3])
+                        data_item[5] += float(it[4])
+                level_index = level_index[:-1] + str(int(level_index[-1:]) + 1)
+            if data_item == [com, project, cost, "", 0, 0, "", "", ""]:
+                return None
+            else:
+                return data_item
 
     def add_value_basic_mode(self, company, cost_index, data):
         """

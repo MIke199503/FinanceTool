@@ -58,10 +58,9 @@ class QueryView:
         # 加个底
         self.basic_frame = ttk.Frame(self.root, width=1920, height=900)
         self.basic_frame.grid_rowconfigure(0, weight=1, minsize=self.basic_frame.winfo_reqheight())
-        # self.basic_frame.grid_rowconfigure(1, weight=1, minsize=self.basic_frame.winfo_reqheight() / 20)
         self.basic_frame.grid_columnconfigure(0, weight=3, minsize=self.basic_frame.winfo_reqwidth() * 3 / 14)
         self.basic_frame.grid_columnconfigure(1, weight=11, minsize=self.basic_frame.winfo_reqwidth() * 9 / 14)
-        self.basic_frame.grid_columnconfigure(2, weight=1)
+        self.basic_frame.grid_columnconfigure(2, weight=1, minsize=self.basic_frame.winfo_reqwidth() / 14)
         self.basic_frame.place(relx=0, rely=0)
 
         # 选项视图
@@ -76,7 +75,7 @@ class QueryView:
         self.tree_frame.grid(row=0, column=1, sticky=tkinter.NSEW)
 
         # 导出视图
-        self.export_frame = ttk.Frame(self.basic_frame)
+        self.export_frame = ttk.Frame(self.basic_frame, borderwidth=10)
         self.export_frame.grid(row=0, column=2, sticky=tkinter.NSEW)
 
         # 构建详细界面
@@ -270,7 +269,7 @@ class QueryView:
         :return:
         """
         export_button = ttk.Button(self.export_frame, text="导出为Excel", command=self.export_excel)
-        export_button.pack(side=tkinter.LEFT, pady=15, padx=15, anchor=tkinter.SW)
+        export_button.place(relx=0.01, rely=0.7)
 
     def get_next_company(self, event):
         """
@@ -513,6 +512,25 @@ class QueryView:
         else:
             showerror(title="暂无数据", message="表格中无有效数据，无法导出")
 
+    def formatNum(self, num):
+        num1 = int(num)
+        dot = "{:.2f}".format(abs(num) % 1)
+        dot = "." + dot.split(".")[1]
+        flag = ""
+        if float(num1) < 0:
+            flag = "-"
+            num1 = str(abs(num1))
+        else:
+            num1 = str(num1)
+        result = ''
+        count = 0
+        for i in num1[::-1]:
+            count += 1
+            result += i
+            if count % 3 == 0:
+                result += ','
+        return flag + result[::-1].strip(',') + dot
+
     def start_query(self):
         """
         查询按钮的回调函数
@@ -547,9 +565,9 @@ class QueryView:
         return_data = query_class.query()
         for index in range(len(return_data)):
             if return_data[index][4] != "":
-                return_data[index][4] = "{:.2f}".format(float(return_data[index][4]))
+                return_data[index][4] = self.formatNum(float(return_data[index][4]))
             if return_data[index][5] != "":
-                return_data[index][5] = "{:.2f}".format(float(return_data[index][4]))
+                return_data[index][5] = self.formatNum(float(return_data[index][5]))
 
         obk = self.table.get_children()
         for item in obk:
