@@ -485,6 +485,7 @@ class Query_Module:
             for com in self.company:
                 for time in self.date:
                     com_list.append(self.deal_single_page_tcc(com=com, time=time))
+            print(com_list)
             for item in com_list:
                 for index in item:
                     index[6] = ""
