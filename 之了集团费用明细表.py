@@ -8,7 +8,7 @@ sys.path.append(os.getcwd())
 import ViewsSets.ChooseFile as choose
 
 root = tkinter.Tk()
-root.geometry("1920x900")
+root.geometry("1900x1000")
 root.title('之了集团费用明细表')
 root.tk.call('source', './theme/forest-light.tcl')
 ttk.Style().theme_use("forest-light")

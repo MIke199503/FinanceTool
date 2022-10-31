@@ -19,16 +19,16 @@ class ChooseFile:
     def __init__(self, root):
         self.filepath = ""
         self.root = root
-        self.root.geometry("1920x900")
+        self.root.geometry("1900x1000")
 
-        self.page = ttk.Frame(self.root, width=1920, height=900)
+        self.page = ttk.Frame(self.root, width=1900, height=1000)
         self.page.place(relx=0, rely=0)
         s1 = ttk.Style()
         s1.configure("A.TButton", font=("TkDefaultFont", 25, "normal"))
         global img_gif
         img_gif = tkinter.PhotoImage(file=r'./theme/集团Logo.png')
         label_img = tkinter.Label(self.page)
-        label_img.place(relx=0.395, rely=0.2)
+        label_img.place(relx=0.395, rely=0.3)
         label_img.config(image=img_gif)
         button = ttk.Button(self.page,
                             text='点击你的数据源Excel',
@@ -36,7 +36,7 @@ class ChooseFile:
                             style="A.TButton",
                             command=self.callbacks)
         button.pack()
-        button.place(relx=0.395, rely=0.5)
+        button.place(relx=0.395, rely=0.55)
 
 
     def callbacks(self):

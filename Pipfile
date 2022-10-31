@@ -5,9 +5,7 @@ name = "pypi"
 
 [packages]
 openpyxl = "*"
-pandas = "*"
-jupyter = "*"
-notebook = "*"
+dateutil = "*"
 
 [dev-packages]
 

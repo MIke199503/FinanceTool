@@ -58,21 +58,20 @@ class QueryView:
         self.root = root_page  # 父级视图
 
         # 加个底
-        self.basic_frame = ttk.Frame(self.root, width=1920, height=900)
+        self.basic_frame = ttk.Frame(self.root, width=1900, height=1000, padding=5)
         self.basic_frame.grid_rowconfigure(0, weight=1, minsize=self.basic_frame.winfo_reqheight())
-        self.basic_frame.grid_columnconfigure(0, weight=3, minsize=self.basic_frame.winfo_reqwidth() * 3 / 18)
-        self.basic_frame.grid_columnconfigure(1, weight=15, minsize=self.basic_frame.winfo_reqwidth() * 15 / 18)
+        self.basic_frame.grid_columnconfigure(0, weight=2, minsize=self.basic_frame.winfo_reqwidth() * 2 / 18)
+        self.basic_frame.grid_columnconfigure(1, weight=16, minsize=self.basic_frame.winfo_reqwidth() * 16 / 18)
         self.basic_frame.place(relx=0, rely=0)
 
         # 选项视图
-        self.choose_frame = ttk.Frame(self.basic_frame, )
-        self.choose_frame["padding"] = (5, 5, 5, 5)
+        self.choose_frame = ttk.Frame(self.basic_frame)  # , padding=(5, 5, 5, 5)
         self.choose_frame.grid_columnconfigure(0, weight=1, )
         self.choose_frame.grid_columnconfigure(1, weight=2, )
         self.choose_frame.grid(row=0, column=0, sticky=tkinter.NSEW)
 
         # 表格视图
-        self.tree_frame = ttk.PanedWindow(self.basic_frame)
+        self.tree_frame = ttk.Frame(self.basic_frame, padding=10)
         self.tree_frame.grid(row=0, column=1, sticky=tkinter.NSEW)
 
         # 构建详细界面
@@ -139,7 +138,7 @@ class QueryView:
         """
         self.get_cost_category_data()
         self.choose_page_basic_frame = ttk.Frame(self.root,
-                                                 width=1920,
+                                                 width=1900,
                                                  height=800,
                                                  )
         self.choose_page_basic_frame.grid_rowconfigure(0, weight=1,
@@ -236,13 +235,13 @@ class QueryView:
         self.table.column("公司", width=150, anchor=tkinter.CENTER)
 
         self.table.heading(column=1, text="项目", anchor=tkinter.CENTER)
-        self.table.column("项目", width=200, anchor=tkinter.CENTER)
+        self.table.column("项目", width=160, anchor=tkinter.CENTER)
 
         self.table.heading(column=2, text="费用类别", anchor=tkinter.CENTER)
-        self.table.column("费用类别", width=200, anchor=tkinter.CENTER)
+        self.table.column("费用类别", width=180, anchor=tkinter.CENTER)
 
         self.table.heading(column=3, text="部门", anchor=tkinter.CENTER)
-        self.table.column("部门", width=200, anchor=tkinter.CENTER)
+        self.table.column("部门", width=150, anchor=tkinter.CENTER)
 
         self.table.heading(column=4, text="当期金额", anchor=tkinter.CENTER)
         self.table.column("当期金额", width=130, anchor=tkinter.CENTER)
@@ -260,7 +259,7 @@ class QueryView:
         self.table.column("当年同比", width=130, anchor=tkinter.CENTER)
 
         export_button = ttk.Button(self.tree_frame, text="导出为Excel", command=self.export_excel)
-        export_button.grid(row=1, column=0, sticky=tkinter.E, pady=20)
+        export_button.grid(row=1, column=0, sticky=tkinter.E, pady=15)
 
     def get_next_company(self, event):
         """

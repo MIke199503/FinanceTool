@@ -37,7 +37,7 @@ class Picker(ttk.Frame):
         self.bind("<FocusOut>", lambda event: self.event_generate('<<PickerFocusOut>>'))
         F = LabelFrame(self)
         F.pack(fill='x')
-        self.canvas = Canvas(F, scrollregion=(0, 0, 500, (len(self._values) * 30)))
+        self.canvas = Canvas(F, scrollregion=(0, 0, 400, (len(self._values) * 30)))
 
         vbar = Scrollbar(F, orient=VERTICAL)
         vbar.pack(side=RIGHT, fill=Y)
@@ -50,7 +50,7 @@ class Picker(ttk.Frame):
 
         self.canvas.config(highlightthickness=0)  # 去掉选中边框
         vbar.config(command=self.canvas.yview)
-        self.canvas.config(width=600, height=200)
+        self.canvas.config(width=400, height=200)
         self.canvas.config(yscrollcommand=vbar.set)
         self.dict_checkbutton = {}
         self.dict_checkbutton_var = {}
@@ -106,7 +106,7 @@ class Combopicker(ttk.Entry, Picker):
         if entrystyle is not None:
             entry_config["style"] = entrystyle
 
-        ttk.Entry.__init__(self, master, textvariable=self.entry_var, **entry_config, width=30, state="normal")
+        ttk.Entry.__init__(self, master, textvariable=self.entry_var, **entry_config, width=25, state="normal")
 
         self._is_menuoptions_visible = False
 
