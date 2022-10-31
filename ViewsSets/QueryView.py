@@ -17,6 +17,8 @@ from DataModule.GetDynamicData import Dynamic_Data
 from ViewsSets.CheckList import CheckBox
 from DataModule.QueryClass import Query_Module
 from tkinter.filedialog import asksaveasfilename
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import time
 
 
@@ -58,9 +60,8 @@ class QueryView:
         # 加个底
         self.basic_frame = ttk.Frame(self.root, width=1920, height=900)
         self.basic_frame.grid_rowconfigure(0, weight=1, minsize=self.basic_frame.winfo_reqheight())
-        self.basic_frame.grid_columnconfigure(0, weight=3, minsize=self.basic_frame.winfo_reqwidth() * 3 / 14)
-        self.basic_frame.grid_columnconfigure(1, weight=11, minsize=self.basic_frame.winfo_reqwidth() * 9 / 14)
-        self.basic_frame.grid_columnconfigure(2, weight=1, minsize=self.basic_frame.winfo_reqwidth() / 14)
+        self.basic_frame.grid_columnconfigure(0, weight=3, minsize=self.basic_frame.winfo_reqwidth() * 3 / 18)
+        self.basic_frame.grid_columnconfigure(1, weight=15, minsize=self.basic_frame.winfo_reqwidth() * 15 / 18)
         self.basic_frame.place(relx=0, rely=0)
 
         # 选项视图
@@ -74,14 +75,9 @@ class QueryView:
         self.tree_frame = ttk.PanedWindow(self.basic_frame)
         self.tree_frame.grid(row=0, column=1, sticky=tkinter.NSEW)
 
-        # 导出视图
-        self.export_frame = ttk.Frame(self.basic_frame, borderwidth=10)
-        self.export_frame.grid(row=0, column=2, sticky=tkinter.NSEW)
-
         # 构建详细界面
         self.create_choose_item()
         self.create_tree_view()
-        self.create_export_view()
 
     def create_choose_item(self):
         """
@@ -212,12 +208,12 @@ class QueryView:
         构建表格，没有数据
         :return:
         """
-        tableColumns = ['公司', '项目', '费用类别', '部门', '当月金额', '当年累计', '当月同比', '当月环比',
+        tableColumns = ['公司', '项目', '费用类别', '部门', '当期金额', '当年累计', '当期同比', '当期环比',
                         "当年同比"]
         # 设置滚动条
         y_scroll = ttk.Scrollbar(self.tree_frame, orient=tkinter.VERTICAL)
         s = ttk.Style()
-        s.configure("Treeview", rowheight=40)
+        s.configure("Treeview", rowheight=35, font=(None, 13, "bold"))
         s.configure("Treeview.Heading",
                     font=(None, 15, "bold"),
                     # rowheight=int(15*1),
@@ -227,7 +223,7 @@ class QueryView:
         self.table = ttk.Treeview(
             master=self.tree_frame,  # 父容器
             columns=tableColumns,  # 列标识符列表
-            height=20,  # 表格显示的行数
+            height=22,  # 表格显示的行数
             show='headings',  # 隐藏首列
             style='Treeview',  # 样式
             yscrollcommand=y_scroll.set,  # y轴滚动条
@@ -240,36 +236,31 @@ class QueryView:
         self.table.column("公司", width=150, anchor=tkinter.CENTER)
 
         self.table.heading(column=1, text="项目", anchor=tkinter.CENTER)
-        self.table.column("项目", width=150, anchor=tkinter.CENTER)
+        self.table.column("项目", width=200, anchor=tkinter.CENTER)
 
         self.table.heading(column=2, text="费用类别", anchor=tkinter.CENTER)
-        self.table.column("费用类别", width=150, anchor=tkinter.CENTER)
+        self.table.column("费用类别", width=200, anchor=tkinter.CENTER)
 
         self.table.heading(column=3, text="部门", anchor=tkinter.CENTER)
-        self.table.column("部门", width=150, anchor=tkinter.CENTER)
+        self.table.column("部门", width=200, anchor=tkinter.CENTER)
 
-        self.table.heading(column=4, text="当月金额", anchor=tkinter.CENTER)
-        self.table.column("当月金额", width=100, anchor=tkinter.CENTER)
+        self.table.heading(column=4, text="当期金额", anchor=tkinter.CENTER)
+        self.table.column("当期金额", width=130, anchor=tkinter.CENTER)
 
         self.table.heading(column=5, text="当年累计", anchor=tkinter.CENTER)
-        self.table.column("当年累计", width=100, anchor=tkinter.CENTER)
+        self.table.column("当年累计", width=130, anchor=tkinter.CENTER)
 
-        self.table.heading(column=6, text="当月同比", anchor=tkinter.CENTER)
-        self.table.column("当月同比", width=100, anchor=tkinter.CENTER)
+        self.table.heading(column=6, text="当期同比", anchor=tkinter.CENTER)
+        self.table.column("当期同比", width=130, anchor=tkinter.CENTER)
 
-        self.table.heading(column=7, text="当月环比", anchor=tkinter.CENTER)
-        self.table.column("当月环比", width=100, anchor=tkinter.CENTER)
+        self.table.heading(column=7, text="当期环比", anchor=tkinter.CENTER)
+        self.table.column("当期环比", width=130, anchor=tkinter.CENTER)
 
         self.table.heading(column=8, text="当年同比", anchor=tkinter.CENTER)
-        self.table.column("当年同比", width=100, anchor=tkinter.CENTER)
+        self.table.column("当年同比", width=130, anchor=tkinter.CENTER)
 
-    def create_export_view(self):
-        """
-        创建导出Excel按钮
-        :return:
-        """
-        export_button = ttk.Button(self.export_frame, text="导出为Excel", command=self.export_excel)
-        export_button.place(relx=0.01, rely=0.7)
+        export_button = ttk.Button(self.tree_frame, text="导出为Excel", command=self.export_excel)
+        export_button.grid(row=1, column=0, sticky=tkinter.E, pady=20)
 
     def get_next_company(self, event):
         """
@@ -549,11 +540,6 @@ class QueryView:
             self.project_choose_data.remove("全选")
         if "全选" in self.depart_choose_data:
             self.depart_choose_data.remove("全选")
-        # print(self.time_choose_data)
-        # print(self.company_choose_data)
-        # print(self.project_choose_data)
-        # print(self.cost_choose_data)
-        # print(self.depart_choose_data)
         if self.cost_choose_data == "":
             self.cost_choose_data = [[], [], [], []]
         query_class = Query_Module(data=self.data_resource,
@@ -563,15 +549,116 @@ class QueryView:
                                    cost_categories=self.cost_choose_data,
                                    depart=self.depart_choose_data)
         return_data = query_class.query()
+
+        data = self.deal_total(basic=return_data)
+        return_data.insert(0, data)
         for index in range(len(return_data)):
             if return_data[index][4] != "":
                 return_data[index][4] = self.formatNum(float(return_data[index][4]))
             if return_data[index][5] != "":
                 return_data[index][5] = self.formatNum(float(return_data[index][5]))
 
+            if return_data[index][4] == "0.00" or return_data[index][4] == "":
+                return_data[index][4] = "-"
+            if return_data[index][5] == "0.00" or return_data[index][5] == "":
+                return_data[index][5] = "-"
+            if return_data[index][6] == "0.00" or return_data[index][6] == "":
+                return_data[index][6] = "-"
+            if return_data[index][7] == "0.00" or return_data[index][7] == "":
+                return_data[index][7] = "-"
+            if return_data[index][8] == "0.00" or return_data[index][8] == "":
+                return_data[index][8] = "-"
+
         obk = self.table.get_children()
         for item in obk:
             self.table.delete(item)
-        for new_data in return_data:
+        self.table.tag_configure('bg', background='DodgerBlue')
+        self.table.tag_configure('fg', foreground='white')
+        self.table.insert("", "end", values=return_data[0], open=True, tags=("bg", "fg"))
+        for new_data in return_data[1:]:
             self.table.insert("", "end", values=new_data, open=True)
         del query_class
+
+    def deal_total(self, basic):
+        """
+        处理合计数据及计算同环比
+        :param basic:
+        :return:
+        """
+        total_data_item = ["合计", "", "", "", 0, 0, "", "", ""]
+        for item in basic:
+            if item[4] != "":
+                total_data_item[4] += float(item[4])
+            if item[5] != "":
+                total_data_item[5] += float(item[5])
+
+        tong_time = []
+        circle_time = []
+        for date in self.time_choose_data:
+            tong_time.append(get_compare_date(date, sep=len(self.time_choose_data))[1])
+            circle_time.append(get_compare_date(date, sep=len(self.time_choose_data))[0])
+
+        tong_time_query_class = Query_Module(data=self.data_resource,
+                                             date=tong_time,
+                                             company=self.company_choose_data,
+                                             project=self.project_choose_data,
+                                             cost_categories=self.cost_choose_data,
+                                             depart=self.depart_choose_data)
+        tong_time_query_result = tong_time_query_class.query()
+
+        circle_query_class = Query_Module(data=self.data_resource,
+                                          date=circle_time,
+                                          company=self.company_choose_data,
+                                          project=self.project_choose_data,
+                                          cost_categories=self.cost_choose_data,
+                                          depart=self.depart_choose_data)
+        circle_time_query_result = circle_query_class.query()
+
+        tong_total = ["合计", "", "", "", 0, 0, "", "", ""]
+        for item in tong_time_query_result:
+            if item[4] != "":
+                tong_total[4] += float(item[4])
+            if item[5] != "":
+                tong_total[5] += float(item[5])
+
+        circle_total = ["合计", "", "", "", 0, 0, "", "", ""]
+        for item in circle_time_query_result:
+            if item[4] != "":
+                circle_total[4] += float(item[4])
+            if item[5] != "":
+                circle_total[5] += float(item[5])
+
+        # 当期同
+        if tong_total[4] != 0:
+            tong = "{:.2f}%".format(((total_data_item[4] - tong_total[4]) / tong_total[4]) * 100)
+        else:
+            tong = "-"
+        # 当期环
+        if circle_total[4] != 0:
+            circle = "{:.2f}%".format(((total_data_item[4] - circle_total[4]) / circle_total[4]) * 100)
+        else:
+            circle = "-"
+        total_data_item[6] = tong
+        total_data_item[7] = circle
+
+        return total_data_item
+
+
+def get_compare_date(data_string: str, sep):
+    """
+    获取对应时间的同比、环比时间
+    :param sep:
+    :param data_string: 日期数据解析（表单）
+    :return: circle_bi, tong_bi  : 环比，同比
+    """
+    date_data = data_string[:]
+    tong_bi = str(int(date_data) - 100)
+    start_time = datetime.strptime("{}-{}".format("20" + data_string[:2], data_string[2:]), '%Y-%m')
+    end_time = start_time + relativedelta(months=-sep)
+    if end_time.month < 10:
+        x = "0" + str(end_time.month)
+    else:
+        x = str(end_time.month)
+
+    circle_bi = str(end_time.year)[-2:] + x
+    return circle_bi, tong_bi

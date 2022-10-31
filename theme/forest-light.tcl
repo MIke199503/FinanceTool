@@ -16,6 +16,7 @@ namespace eval ttk::theme::forest-light {
         -disabledbg     "#ffffff"
         -selectfg       "#ffffff"
         -selectbg       "#217346"
+        -selecttreebg   "#006FB0"
     }
 
     proc LoadImages {imgdir} {
@@ -40,7 +41,7 @@ namespace eval ttk::theme::forest-light {
             -insertwidth 1 \
             -insertcolor $colors(-fg) \
             -fieldbackground $colors(-selectbg) \
-            -font {TkDefaultFont 14 bold} \
+            -font {TkDefaultFont 13 bold} \
             -borderwidth 1 \
             -relief flat
 
@@ -227,7 +228,7 @@ namespace eval ttk::theme::forest-light {
         ttk::style configure TButton -padding {8 4 8 4} -width -10 -anchor center
 
         ttk::style element create Button.button image \
-            [list $I(rect-basic) \
+            [list $I(tree-test) \
             	{selected disabled} $I(rect-basic) \
                 disabled $I(rect-basic) \
                 selected $I(rect-basic) \
@@ -532,7 +533,7 @@ namespace eval ttk::theme::forest-light {
         ttk::style configure Treeview.Item -padding {2 0 0 0}
 
         ttk::style map Treeview \
-            -background [list selected $colors(-selectbg)] \
+            -background [list selected $colors(-selecttreebg)] \
             -foreground [list selected $colors(-selectfg)]
 
 
