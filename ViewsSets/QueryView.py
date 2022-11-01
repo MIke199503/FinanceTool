@@ -207,7 +207,7 @@ class QueryView:
         构建表格，没有数据
         :return:
         """
-        tableColumns = ['公司', '项目', '费用类别', '部门', '当期金额', '当年累计', '当期同比', '当期环比',
+        tableColumns = ['项目', '公司', '费用类别', '部门', '当期金额', '当年累计', '当期同比', '当期环比',
                         "当年同比"]
         # 设置滚动条
         y_scroll = ttk.Scrollbar(self.tree_frame, orient=tkinter.VERTICAL)
@@ -231,11 +231,11 @@ class QueryView:
         y_scroll.config(command=self.table.yview)
         self.table.grid(row=0, column=0)  # TreeView加入frame
         # ['公司', '项目', '费用类别', '部门', '当月金额', '当年累积', '当月同比', '当月环比', '当年同比']
-        self.table.heading(column=0, text="公司", anchor=tkinter.CENTER)
-        self.table.column("公司", width=150, anchor=tkinter.CENTER)
+        self.table.heading(column=0, text="项目", anchor=tkinter.CENTER)
+        self.table.column("项目", width=150, anchor=tkinter.CENTER)
 
-        self.table.heading(column=1, text="项目", anchor=tkinter.CENTER)
-        self.table.column("项目", width=160, anchor=tkinter.CENTER)
+        self.table.heading(column=1, text="公司", anchor=tkinter.CENTER)
+        self.table.column("公司", width=160, anchor=tkinter.CENTER)
 
         self.table.heading(column=2, text="费用类别", anchor=tkinter.CENTER)
         self.table.column("费用类别", width=180, anchor=tkinter.CENTER)
@@ -552,6 +552,7 @@ class QueryView:
         data = self.deal_total(basic=return_data)
         return_data.insert(0, data)
         for index in range(len(return_data)):
+            return_data[index][0], return_data[index][1] = return_data[index][1], return_data[index][0]
             if return_data[index][4] != "":
                 return_data[index][4] = self.formatNum(float(return_data[index][4]))
             if return_data[index][5] != "":
@@ -584,7 +585,7 @@ class QueryView:
         :param basic:
         :return:
         """
-        total_data_item = ["合计", "", "", "", 0, 0, "", "", ""]
+        total_data_item = ["", "合计", "", "", 0, 0, "", "", ""]
         for item in basic:
             if item[4] != "":
                 total_data_item[4] += float(item[4])
@@ -613,14 +614,14 @@ class QueryView:
                                           depart=self.depart_choose_data)
         circle_time_query_result = circle_query_class.query()
 
-        tong_total = ["合计", "", "", "", 0, 0, "", "", ""]
+        tong_total = ["", "合计", "", "", 0, 0, "", "", ""]
         for item in tong_time_query_result:
             if item[4] != "":
                 tong_total[4] += float(item[4])
             if item[5] != "":
                 tong_total[5] += float(item[5])
 
-        circle_total = ["合计", "", "", "", 0, 0, "", "", ""]
+        circle_total = ["", "合计", "", "", 0, 0, "", "", ""]
         for item in circle_time_query_result:
             if item[4] != "":
                 circle_total[4] += float(item[4])
