@@ -1,5 +1,5 @@
 ('\\\\vmware-host\\Shared '
- 'Folders\\Desktop\\FinanceTool\\build\\之了集团费用明细表\\PYZ-00.pyz',
+ 'Folders\\Documents\\Python\\FinanceTool\\build\\之了集团费用明细表\\PYZ-00.pyz',
  [('subprocess',
    'C:\\Users\\labixiaoxin\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\subprocess.py',
    'PYMODULE'),
@@ -311,61 +311,61 @@
    'PYMODULE'),
   ('ViewsSets.ChooseFile',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\ViewsSets\\ChooseFile.py',
+   'Folders\\Documents\\Python\\FinanceTool\\ViewsSets\\ChooseFile.py',
    'PYMODULE'),
   ('ViewsSets',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\ViewsSets\\__init__.py',
+   'Folders\\Documents\\Python\\FinanceTool\\ViewsSets\\__init__.py',
    'PYMODULE'),
   ('ViewsSets.QueryView',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\ViewsSets\\QueryView.py',
+   'Folders\\Documents\\Python\\FinanceTool\\ViewsSets\\QueryView.py',
    'PYMODULE'),
   ('dateutil.relativedelta',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\dateutil\\relativedelta.py',
+   'Folders\\Documents\\Python\\FinanceTool\\dateutil\\relativedelta.py',
    'PYMODULE'),
   ('dateutil',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\dateutil\\__init__.py',
+   'Folders\\Documents\\Python\\FinanceTool\\dateutil\\__init__.py',
    'PYMODULE'),
   ('dateutil._version',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\dateutil\\_version.py',
+   'Folders\\Documents\\Python\\FinanceTool\\dateutil\\_version.py',
    'PYMODULE'),
   ('dateutil._common',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\dateutil\\_common.py',
+   'Folders\\Documents\\Python\\FinanceTool\\dateutil\\_common.py',
    'PYMODULE'),
   ('six',
-   '\\\\vmware-host\\Shared Folders\\Desktop\\FinanceTool\\six.py',
+   '\\\\vmware-host\\Shared Folders\\Documents\\Python\\FinanceTool\\six.py',
    'PYMODULE'),
   ('__future__',
    'C:\\Users\\labixiaoxin\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\__future__.py',
    'PYMODULE'),
   ('DataModule.QueryClass',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\DataModule\\QueryClass.py',
+   'Folders\\Documents\\Python\\FinanceTool\\DataModule\\QueryClass.py',
    'PYMODULE'),
   ('ViewsSets.CheckList',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\ViewsSets\\CheckList.py',
+   'Folders\\Documents\\Python\\FinanceTool\\ViewsSets\\CheckList.py',
    'PYMODULE'),
   ('DataModule.GetDynamicData',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\DataModule\\GetDynamicData.py',
+   'Folders\\Documents\\Python\\FinanceTool\\DataModule\\GetDynamicData.py',
    'PYMODULE'),
   ('DataModule.BasicMessage',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\DataModule\\BasicMessage.py',
+   'Folders\\Documents\\Python\\FinanceTool\\DataModule\\BasicMessage.py',
    'PYMODULE'),
   ('DataModule',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\DataModule\\__init__.py',
+   'Folders\\Documents\\Python\\FinanceTool\\DataModule\\__init__.py',
    'PYMODULE'),
   ('ViewsSets.ComBoPicker',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\ViewsSets\\ComBoPicker.py',
+   'Folders\\Documents\\Python\\FinanceTool\\ViewsSets\\ComBoPicker.py',
    'PYMODULE'),
   ('openpyxl',
    'C:\\Users\\labixiaoxin\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\openpyxl\\__init__.py',
@@ -930,7 +930,7 @@
    'PYMODULE'),
   ('DataModule.ReadExcel',
    '\\\\vmware-host\\Shared '
-   'Folders\\Desktop\\FinanceTool\\DataModule\\ReadExcel.py',
+   'Folders\\Documents\\Python\\FinanceTool\\DataModule\\ReadExcel.py',
    'PYMODULE'),
   ('tkinter.messagebox',
    'C:\\Users\\labixiaoxin\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\tkinter\\messagebox.py',

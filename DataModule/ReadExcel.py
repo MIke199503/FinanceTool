@@ -17,13 +17,13 @@ class FirstDeal:
         self.file_path = filepath
         self.company_sheet_detail = {}  # 所有数据
         self.time_data = []  # 可选日期
-
+        self.txt_file = open("log.txt", "w", encoding="utf-8")
         # 尝试打开文件，得到wb
         try:
             self.wb = openpyxl.load_workbook(filepath, data_only=True)
             self.workbook_sheets_names = self.wb.sheetnames
         except:
-            print("somethings wrong")
+            raise "Can't Open Excel File"
         self.deal_sheets()
         self.get_time_data()
         self.calculate_year_basis()
@@ -46,16 +46,22 @@ class FirstDeal:
                 self.company_sheet_detail[x] = {}
             else:
                 pass
+        self.txt_file.write("公司字典组合成功！")
         # 读取所有表格中所有的信息，并按照预定格式组合
         for item_company_abb in company_abb:  #
             for item_sheet_name in self.workbook_sheets_names:
                 if item_company_abb in item_sheet_name:  # 找到对应表
                     # 读取单张表格 获取未经处理的所有数据
+                    self.txt_file.write(f"尝试获取{item_sheet_name}表相关数据！")
                     sheet_data = self.read_single_sheet_table(sheet_name=item_sheet_name)
+                    self.txt_file.write(f"获取{item_sheet_name}表相关数据！成功！")
                     # 处理数据，得到组合数据
+                    self.txt_file.write(f"开始重建{item_sheet_name}表相关数据！")
                     finally_sheet_data = self.rebuilt_page_data(sheet_data)
+                    self.txt_file.write(f"重建{item_sheet_name}表相关数据！成功！")
                     # 组合数据
                     self.company_sheet_detail[item_company_abb][item_sheet_name] = finally_sheet_data
+                    self.txt_file.write(f"组合数据成功")
         # 可接受返回的数据，也可以直接调取属性
         return self.company_sheet_detail
 
