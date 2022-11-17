@@ -23,6 +23,7 @@ class Query_Module:
     def __init__(self, data: FirstDeal, date, company, project, cost_categories, depart):
         self.data = data
         self.date = date
+        print(self.date)
         self.company = []
         for x in company:
             self.company.append(company_abbreviation[x])
@@ -511,11 +512,8 @@ class Query_Module:
         if self.mode == "单日期":
             for com in self.company:
                 com_time = com + self.date[0]
-                try:
+                if com_time in self.data.company_sheet_detail[com].keys():
                     sheets_data = self.data.company_sheet_detail[com][com_time]["Level1"]["total"].keys()
-                except:
-                    showerror(titel="发生错误", message="无法获取对应数据，请重新选择，或联系：朱桃禾")
-                else:
                     for teme in sheets_data:
                         item_data = [com,
                                      "",
@@ -729,7 +727,7 @@ class Query_Module:
                     for tem_data in sheets_data:
                         if tem_data[1] in self.depart:
                             if not page_return:
-                                page_return.append([com,
+                                pag=e_return.append([com,
                                                     "",
                                                     "",
                                                     tem_data[1],
