@@ -23,7 +23,7 @@ class FirstDeal:
             self.wb = openpyxl.load_workbook(filepath, data_only=True)
             self.workbook_sheets_names = self.wb.sheetnames
         except:
-            raise "Can't Open Excel File"
+            self.txt_file.write("Can't Open Excel File")
         self.deal_sheets()
         self.get_time_data()
         self.calculate_year_basis()
@@ -46,22 +46,22 @@ class FirstDeal:
                 self.company_sheet_detail[x] = {}
             else:
                 pass
-        self.txt_file.write("公司字典组合成功！")
+        self.txt_file.write("公司字典组合成功！\n")
         # 读取所有表格中所有的信息，并按照预定格式组合
         for item_company_abb in company_abb:  #
             for item_sheet_name in self.workbook_sheets_names:
                 if item_company_abb in item_sheet_name:  # 找到对应表
                     # 读取单张表格 获取未经处理的所有数据
-                    self.txt_file.write(f"尝试获取{item_sheet_name}表相关数据！")
+                    self.txt_file.write(f"尝试获取{item_sheet_name}表相关数据！\n")
                     sheet_data = self.read_single_sheet_table(sheet_name=item_sheet_name)
-                    self.txt_file.write(f"获取{item_sheet_name}表相关数据！成功！")
+                    self.txt_file.write(f"获取{item_sheet_name}表相关数据！成功！\n")
                     # 处理数据，得到组合数据
-                    self.txt_file.write(f"开始重建{item_sheet_name}表相关数据！")
+                    self.txt_file.write(f"开始重建{item_sheet_name}表相关数据！\n")
                     finally_sheet_data = self.rebuilt_page_data(sheet_data)
-                    self.txt_file.write(f"重建{item_sheet_name}表相关数据！成功！")
+                    self.txt_file.write(f"重建{item_sheet_name}表相关数据！成功！\n")
                     # 组合数据
                     self.company_sheet_detail[item_company_abb][item_sheet_name] = finally_sheet_data
-                    self.txt_file.write(f"组合数据成功")
+                    self.txt_file.write(f"{item_sheet_name}组合数据成功\n")
         # 可接受返回的数据，也可以直接调取属性
         return self.company_sheet_detail
 
@@ -80,6 +80,7 @@ class FirstDeal:
             for col in range(1, max_col_num):
                 col_letter = get_column_letter(col)
                 row_item.append(ws[col_letter + str(row)].value)
+            row_item[0] = str(row_item[0])
             data.append(row_item)
         return data
 
@@ -120,7 +121,7 @@ class FirstDeal:
             else:
                 for useful_Level in useful_Level_1:
                     # 只针对有效一级标题下的所有数据
-                    if useful_Level in data_index[0]:
+                    if useful_Level in str(data_index[0]):
                         # 有效数据
                         # ["科目代码","部门","项目","本期借方发生","本期借方累积"]
                         data_detail = [data_index[0], data_index[1], data_index[2], data_index[8], data_index[10]]
